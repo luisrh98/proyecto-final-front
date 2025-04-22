@@ -1,0 +1,165 @@
+// src/assets/scss/global.scss
+@import '_variables';
+@import 'mixins';
+
+
+// Reset moderno
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: $font-family;
+  line-height: 1.6;
+  color: $dark;
+  background: $white;
+}
+
+// Sistema de grid
+.container {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 20px;
+  
+  @media (max-width: 768px) {
+    padding: 0 15px;
+  }
+}
+
+// Botones estratégicos
+.btn {
+  padding: 14px 28px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: $transition;
+  
+  &-primary {
+    background: $primary;
+    color: $white;
+    
+    &:hover {
+      background: darken($primary, 10%);
+    }
+  }
+  
+  &-secondary {
+    background: $secondary;
+    color: $white;
+    
+    &:hover {
+      background: lighten($secondary, 15%);
+    }
+  }
+  
+  &-accent {
+    background: linear-gradient(135deg, $accent 0%, #e67e22 100%);
+    color: $white;
+    box-shadow: $box-shadow;
+    
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+}
+
+// Formularios atractivos
+.form-control {
+  width: 100%;
+  padding: 14px;
+  margin: 10px 0;
+  border: 2px solid $gray;
+  border-radius: 8px;
+  transition: $transition;
+  
+  &:focus {
+    border-color: $primary;
+    box-shadow: 0 0 0 2px rgba($primary, 0.2);
+    outline: none;
+  }
+  
+  &::placeholder {
+    color: lighten($dark, 40%);
+  }
+}
+
+// Tarjetas de producto
+.product-card {
+  background: $white;
+  border-radius: 12px;
+  box-shadow: $box-shadow;
+  transition: $transition;
+  overflow: hidden;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    
+    .btn-accent {
+      transform: scale(1.05);
+    }
+  }
+  
+  img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+  }
+}
+
+// Navegación inteligente
+.navbar {
+  position: sticky;
+  top: 0;
+  background: rgba($secondary, 0.90);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  
+  .logo {
+    color: $white;
+    font-family: $font-display;
+    font-size: 1.5rem;
+  }
+  
+  .nav-links {
+    a {
+      color: $white;
+      margin: 0 15px;
+      transition: $transition;
+      
+      &:hover {
+        color: $accent;
+      }
+    }
+  }
+}
+
+// Animaciones sutiles
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+// Modo oscuro (tendencia 2024)
+@media (prefers-color-scheme: dark) {
+  body {
+    background: $white;
+    color: $dark;
+  }
+  
+  .btn-secondary {
+    background: $dark;
+  }
+  
+  .product-card {
+    background: darken($secondary, 10%);
+    border: 1px solid lighten($secondary, 10%);
+  }
+}

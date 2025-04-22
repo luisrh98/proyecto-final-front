@@ -1,0 +1,41 @@
+// src/assets/scss/_variables.scss
+// Paleta profesional 2024
+$primary: #2B54D9; // Azul dinámico
+$secondary: #1A2A53; // Azul noche
+$terciary: #1c3574;
+$accent: #FF6B35; // Naranja vibrante
+$success: #28A745;
+$danger: #E74D3C;
+$white: #FEFEFE;
+$gray: #F5F5F5;
+$dark: #121212;
+$gradient: linear-gradient(135deg, #6A11CB 0%, #2575FC 100%);
+
+// Tipografía moderna
+$font-family: 'Inter', system-ui, sans-serif;
+$font-display: 'Manrope', sans-serif;
+
+// Espaciado modular
+$spacing-unit: 0.5rem;
+$container-max-width: 120rem;
+
+// Efectos premium
+$box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+$transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+// Breakpoints modernos
+$breakpoints: (
+  'xs': 0,
+  'sm': 600px,
+  'md': 900px,
+  'lg': 1200px,
+  'xl': 1536px
+) !default;
+
+// Capas z-index
+$z-layers: (
+  'modal': 1000,
+  'dropdown': 500,
+  'navbar': 200,
+  'default': 1
+);
