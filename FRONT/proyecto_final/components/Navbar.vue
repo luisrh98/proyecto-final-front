@@ -2,7 +2,7 @@
   <nav class="navbar">
     <div class="container">
       <!-- Logo -->
-      <NuxtLink to="/home" class="logo">Mi Tienda</NuxtLink>
+      <NuxtLink to="/index" class="logo">Mi Tienda</NuxtLink>
       
       <!-- Contenedor de acciones -->
       <div class="nav-actions">
@@ -15,7 +15,7 @@
           <div class="dropdown-menu">
             <div class="menu-inner">
               <NuxtLink 
-                :to="{ path: '/home' }" 
+                :to="{ path: '/index' }" 
                 class="menu-item"
               >
               Mostrar todo
