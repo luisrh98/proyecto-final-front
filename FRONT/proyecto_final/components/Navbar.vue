@@ -23,7 +23,7 @@
               <NuxtLink 
                 v-for="cat in categorias" 
                 :key="cat.id" 
-                :to="{ path: '/home', query: { categoria: cat.id } }" 
+                :to="{ path: '/index', query: { categoria: cat.id } }" 
                 class="menu-item"
               >
                 {{ cat.nombre }}

@@ -106,7 +106,7 @@ const handleSubmit = async () => {
     sessionStorage.setItem('refreshToken', data.refresh);
     sessionStorage.setItem('authUser', JSON.stringify(data.user));
 
-    router.push('/home');
+    router.push('/index');
     showNotification('¡Bienvenido de nuevo!', 'success'); // Notificación de éxito
   } catch (error) {
     if (error.response?.status === 400) {
