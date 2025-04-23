@@ -74,7 +74,7 @@ const handleSubmit = async () => {
       password1: password1.value,
       telefono: telefono.value || null, // Envía null si está vacío
     });
-    
+    router.push('/login'); 
   } catch (error) {
     // Manejo de errores específico
     if (error.response) {

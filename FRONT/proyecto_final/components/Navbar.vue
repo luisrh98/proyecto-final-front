@@ -2,7 +2,7 @@
   <nav class="navbar">
     <div class="container">
       <!-- Logo -->
-      <NuxtLink to="/index" class="logo">Mi Tienda</NuxtLink>
+      <NuxtLink to="/" class="logo">Mi Tienda</NuxtLink>
       
       <!-- Contenedor de acciones -->
       <div class="nav-actions">
@@ -15,7 +15,7 @@
           <div class="dropdown-menu">
             <div class="menu-inner">
               <NuxtLink 
-                :to="{ path: '/index' }" 
+                :to="{ path: '/' }" 
                 class="menu-item"
               >
               Mostrar todo
@@ -23,7 +23,7 @@
               <NuxtLink 
                 v-for="cat in categorias" 
                 :key="cat.id" 
-                :to="{ path: '/index', query: { categoria: cat.id } }" 
+                :to="{ path: '/', query: { categoria: cat.id } }" 
                 class="menu-item"
               >
                 {{ cat.nombre }}
