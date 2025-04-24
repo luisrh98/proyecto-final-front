@@ -16,11 +16,11 @@
             <p><strong>Total:</strong> €{{ pedido.total }}</p>
             <div class="pedido-direccion">
               <h3>Dirección de Envío</h3>
-              <p v-if="pedido.direccion">
-                {{ pedido.direccion.calle }}, 
-                {{ pedido.direccion.ciudad }}, 
-                {{ pedido.direccion.codigo_postal }}, 
-                {{ pedido.direccion.pais }}
+              <p v-if="pedido">
+                {{ pedido.calle }}, 
+                {{ pedido.ciudad }}, 
+                {{ pedido.codigo_postal }}, 
+                {{ pedido.pais }}
               </p>
               <p v-else>Sin dirección asignada</p>
             </div>

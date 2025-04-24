@@ -6,7 +6,6 @@
     <!-- Barra de navegación -->
     <Navbar />
 
-
     <!-- Contenido principal -->
     <div class="content-wrapper">
       <!-- Título de perfil -->
@@ -67,22 +66,16 @@
           />
         </div>
 
-        <!-- Direcciones -->
+        <!-- Dirección -->
         <div class="address-section">
-          <h3 class="address-title">Direcciones</h3>
-          
-          <div
-            v-for="(direccion, index) in usuario.direcciones"
-            :key="direccion.id || index"
-            class="address-card"
-          >
-            <input type="hidden" v-model="direccion.id">
-            
+          <h3 class="address-title">Dirección</h3>
+
+          <div class="address-card">
             <div class="form-group">
-              <label :for="`calle-${index}`" class="label">Calle</label>
+              <label for="calle" class="label">Calle</label>
               <input
-                :id="`calle-${index}`"
-                v-model="direccion.calle"
+                id="calle"
+                v-model="usuario.direccion.calle"
                 type="text"
                 required
                 class="input"
@@ -90,10 +83,10 @@
             </div>
 
             <div class="form-group">
-              <label :for="`ciudad-${index}`" class="label">Ciudad</label>
+              <label for="ciudad" class="label">Ciudad</label>
               <input
-                :id="`ciudad-${index}`"
-                v-model="direccion.ciudad"
+                id="ciudad"
+                v-model="usuario.direccion.ciudad"
                 type="text"
                 required
                 class="input"
@@ -101,10 +94,10 @@
             </div>
 
             <div class="form-group">
-              <label :for="`codigo_postal-${index}`" class="label">Código Postal</label>
+              <label for="codigo_postal" class="label">Código Postal</label>
               <input
-                :id="`codigo_postal-${index}`"
-                v-model="direccion.codigo_postal"
+                id="codigo_postal"
+                v-model="usuario.direccion.codigo_postal"
                 type="text"
                 required
                 class="input"
@@ -112,10 +105,10 @@
             </div>
 
             <div class="form-group">
-              <label :for="`pais-${index}`" class="label">País</label>
+              <label for="pais" class="label">País</label>
               <input
-                :id="`pais-${index}`"
-                v-model="direccion.pais"
+                id="pais"
+                v-model="usuario.direccion.pais"
                 type="text"
                 required
                 class="input"
@@ -125,19 +118,11 @@
             <button
               type="button"
               class="btn btn-danger mt-4"
-              @click="removeAddress(index)"
+              @click="removeAddress"
             >
               Eliminar Dirección
             </button>
           </div>
-
-          <button
-            type="button"
-            class="btn btn-secondary mt-6"
-            @click="addAddress"
-          >
-            Agregar Dirección
-          </button>
         </div>
 
         <!-- Botón de guardar -->
@@ -168,7 +153,12 @@ const usuario = ref({
   last_name: '',
   email: '',
   telefono: '',
-  direcciones: []
+  direccion: {  // Dirección como objeto único
+    calle: '',
+    ciudad: '',
+    codigo_postal: '',
+    pais: ''
+  }
 })
 
 const fetchUsuario = async () => {
@@ -180,7 +170,16 @@ const fetchUsuario = async () => {
       headers: { Authorization: `Bearer ${token}` }
     })
 
-    usuario.value = data
+    // Asegúrate de que la dirección sea un objeto vacío si no existe
+    usuario.value = {
+      ...data,
+      direccion: data.direccion || {
+        calle: '',
+        ciudad: '',
+        codigo_postal: '',
+        pais: ''
+      }
+    }
   } catch (error) {
     console.error('Error al cargar perfil:', error)
     router.push('/login') // Redirigir si falla el fetch
@@ -202,27 +201,10 @@ const saveProfile = async () => {
   }
 }
 
-const addAddress = () => {
-  usuario.value.direcciones.push({
-    calle: '',
-    ciudad: '',
-    codigo_postal: '',
-    pais: ''
-  })
-}
-
-const removeAddress = (index) => {
-  usuario.value.direcciones.splice(index, 1)
-}
-
-const logout = () => {
-  authStore.logout()
-  router.push('/login')
-}
-
-const goToLogin = () => {
-  router.push('/login')
-}
+// Eliminar dirección reiniciando los campos
+const removeAddress = () => {
+  usuario.value.direccion = null; // Enviar null al backend
+};
 
 onMounted(() => {
   if (import.meta.client) {
