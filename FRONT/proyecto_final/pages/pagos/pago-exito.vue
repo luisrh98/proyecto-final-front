@@ -54,7 +54,7 @@
   });
   
   const volverAInicio = () => {
-    router.push('/index');
+    router.push('/');
   };
   </script>
   
