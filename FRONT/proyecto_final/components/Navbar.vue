@@ -32,9 +32,14 @@
           </div>
         </div>
         <!-- Botón administrador -->
-        <NuxtLink to="/panel-administrador" class="nav-btn btn-accent">
+        <NuxtLink to="/panel_administrador" class="nav-btn btn-accent">
           <button name="mdi:account-circle" class="icon" />
           Panel administrador
+        </NuxtLink>
+        <!-- Botón Gestión Pedidos -->
+        <NuxtLink to="/gestor/gestion_pedidos" class="nav-btn btn-accent">
+          <button name="mdi:account-circle" class="icon" />
+          Gestionar productos
         </NuxtLink>
         <!-- Botón Perfil -->
         <NuxtLink to="/perfil" class="nav-btn btn-accent">
