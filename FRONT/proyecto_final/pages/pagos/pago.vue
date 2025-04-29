@@ -4,8 +4,33 @@
   <div class="payment-page">
     <div class="payment-container">
       <h1>Realiza el Pago</h1>
+
+      <!-- Formulario de Dirección -->
+      <div class="address-form">
+        <h2>Dirección de Envío</h2>
+        <form @submit.prevent="guardarDireccion">
+          <div class="form-group">
+            <label for="calle">Calle:</label>
+            <input v-model="direccion.calle" id="calle" type="text" required />
+          </div>
+          <div class="form-group">
+            <label for="ciudad">Ciudad:</label>
+            <input v-model="direccion.ciudad" id="ciudad" type="text" required />
+          </div>
+          <div class="form-group">
+            <label for="codigo_postal">Código Postal:</label>
+            <input v-model="direccion.codigo_postal" id="codigo_postal" type="text" required />
+          </div>
+          <div class="form-group">
+            <label for="pais">País:</label>
+            <input v-model="direccion.pais" id="pais" type="text" required />
+          </div>
+          <button type="submit" class="btn btn-primary">Guardar Dirección</button>
+        </form>
+      </div>
+
+      <!-- Selector de método de pago -->
       <form @submit.prevent="handleSubmit">
-        <!-- Selector de método de pago -->
         <div>
           <label for="metodoPago">Método de pago:</label>
           <select v-model="metodoPagoId" id="metodoPago" required>
@@ -22,7 +47,6 @@
       </form>
       <p v-if="errorMsg" class="error">{{ errorMsg }}</p>
     </div>
-    
   </div>
   <Footer />
 </template>
@@ -47,10 +71,18 @@ const stripe = ref(null);
 const elements = ref(null);
 const cardElement = ref(null);
 const errorMsg = ref('');
-const metodoPagoId = ref(null);  // ID del método de pago seleccionado
-const metodosPago = ref([]);  // Lista de métodos de pago disponibles
+const metodoPagoId = ref(null); // ID del método de pago seleccionado
+const metodosPago = ref([]); // Lista de métodos de pago disponibles
 
-// Cargar los métodos de pago desde el backend
+// Datos de la dirección del usuario
+const direccion = ref({
+  calle: '',
+  ciudad: '',
+  codigo_postal: '',
+  pais: ''
+});
+
+// Cargar los datos iniciales
 onMounted(async () => {
   if (import.meta.client) {
     authStore.cargarTokensDesdeSession();
@@ -61,19 +93,51 @@ onMounted(async () => {
     }
 
     // Obtener los métodos de pago del backend
-    const response = await $axios.get('/orders/metodos-pago/');
-    metodosPago.value = response.data;
+    const responseMetodosPago = await $axios.get('/orders/metodos-pago/');
+    metodosPago.value = responseMetodosPago.data;
 
+    // Obtener la dirección del usuario desde el backend
+    try {
+      const token = authStore.authToken;
+      const { data } = await $axios.get('/accounts/me/', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      // Si el usuario tiene una dirección, cargarla
+      if (data.direccion) {
+        direccion.value = data.direccion;
+      }
+    } catch (error) {
+      console.error('Error al cargar la dirección:', error);
+    }
+
+    // Inicializar Stripe
     const stripeLib = await import('@stripe/stripe-js');
     stripe.value = await stripeLib.loadStripe(config.public.stripePublicKey);
     elements.value = stripe.value.elements();
   }
 });
 
+// Guardar o actualizar la dirección del usuario
+const guardarDireccion = async () => {
+  try {
+    const token = authStore.authToken;
+    if (!token) throw new Error('No hay token disponible');
+
+    await $axios.put('/accounts/me/', { direccion: direccion.value }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    alert('Dirección guardada con éxito');
+  } catch (error) {
+    console.error('Error al guardar la dirección:', error);
+    errorMsg.value = 'Ocurrió un error al guardar la dirección.';
+  }
+};
+
 // Verificar cuando el div del formulario de tarjeta se renderiza y montar el elemento
 watch(metodoPagoId, async (newMetodoPagoId) => {
   if (newMetodoPagoId === 1) {
-    // Esperar a que el DOM se actualice y el div esté disponible
     nextTick(() => {
       if (cardElement.value) {
         const card = elements.value.create('card');
@@ -85,7 +149,6 @@ watch(metodoPagoId, async (newMetodoPagoId) => {
       }
     });
   } else {
-    // Limpiar el formulario de tarjeta cuando se cambie de método
     if (cardElement.value) {
       cardElement.value.innerHTML = '';
     }
@@ -116,7 +179,7 @@ const handleSubmit = async () => {
       amount: amountInCents, // Monto en centavos
       currency: 'usd',
       cart_items: cartItems, // Elementos del carrito
-      metodo_pago_id: metodoPagoId.value  // Método de pago seleccionado
+      metodo_pago_id: metodoPagoId.value // Método de pago seleccionado
     }, {
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -138,7 +201,6 @@ const handleSubmit = async () => {
       errorMsg.value = stripeError.message;
     } else if (paymentIntent && paymentIntent.status === 'succeeded') {
       alert('Pago exitoso y pedido creado');
-      // Limpiar el carrito y redirigir al usuario
       cartStore.clearCart();
       router.push(`/pagos/pago-exito?paymentIntentId=${paymentIntent.id}`);
     }
@@ -153,10 +215,9 @@ const handleSubmit = async () => {
 @import '../../assets/scss/global.scss';
 
 .payment-page {
-  
   background: $white;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   text-align: center;
 
   h1 {
@@ -183,6 +244,26 @@ const handleSubmit = async () => {
     .error {
       color: red;
       margin-top: 1rem;
+    }
+  }
+
+  .address-form {
+    margin-bottom: 2rem;
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid lighten($gray, 20%);
+      border-radius: 6px;
     }
   }
 }
