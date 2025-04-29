@@ -31,7 +31,11 @@
             </div>
           </div>
         </div>
-
+        <!-- Botón administrador -->
+        <NuxtLink to="/panel-administrador" class="nav-btn btn-accent">
+          <button name="mdi:account-circle" class="icon" />
+          Panel administrador
+        </NuxtLink>
         <!-- Botón Perfil -->
         <NuxtLink to="/perfil" class="nav-btn btn-accent">
           <button name="mdi:account-circle" class="icon" />

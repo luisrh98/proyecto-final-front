@@ -125,7 +125,40 @@
           </div>
         </div>
 
-        <!-- Botón de guardar -->
+        <!-- Sección para solicitar ser gestor -->
+        <div v-if="usuario.tipo === 'cliente' && !usuario.solicitud_gestor" class="vendor-request-section">
+          <h3>Solicitar ser gestor</h3>
+          <div class="form-group">
+            <label for="nombre_tienda">Nombre de la Tienda</label>
+            <input
+              id="nombre_tienda"
+              v-model="datosGestor.nombre_tienda"
+              type="text"
+              required
+              class="input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="identificacion_fiscal">Identificación Fiscal</label>
+            <input
+              id="identificacion_fiscal"
+              v-model="datosGestor.identificacion_fiscal"
+              type="text"
+              required
+              class="input"
+            />
+          </div>
+          <button type="button" class="btn btn-primary" @click="enviarSolicitudGestor">
+            Enviar solicitud
+          </button>
+        </div>
+
+        <!-- Mensaje si ya se envió la solicitud -->
+        <div v-if="usuario.solicitud_gestor" class="vendor-request-status">
+          <p>Tu solicitud para ser gestor está pendiente de aprobación.</p>
+        </div>
+
+        <!-- Botón de guardar cambios -->
         <div class="action-buttons">
           <button type="submit" class="btn btn-primary w-full md:w-auto">
             Guardar Cambios
@@ -147,20 +180,30 @@ const { $axios } = useNuxtApp()
 const authStore = useAuthStore()
 const router = useRouter()
 
+// Datos del usuario
 const usuario = ref({
   username: '',
   first_name: '',
   last_name: '',
   email: '',
   telefono: '',
-  direccion: {  // Dirección como objeto único
+  tipo: 'cliente',
+  direccion: { // Dirección como objeto único
     calle: '',
     ciudad: '',
     codigo_postal: '',
     pais: ''
-  }
+  },
+  solicitud_gestor: false, // Estado de la solicitud
 })
 
+// Datos específicos para la solicitud de gestor
+const datosGestor = ref({
+  nombre_tienda: '',
+  identificacion_fiscal: '',
+})
+
+// Cargar datos del usuario
 const fetchUsuario = async () => {
   try {
     const token = authStore.authToken
@@ -186,6 +229,7 @@ const fetchUsuario = async () => {
   }
 }
 
+// Guardar cambios en el perfil
 const saveProfile = async () => {
   try {
     const token = authStore.authToken
@@ -204,6 +248,29 @@ const saveProfile = async () => {
 // Eliminar dirección reiniciando los campos
 const removeAddress = () => {
   usuario.value.direccion = null; // Enviar null al backend
+};
+
+// Enviar solicitud para ser gestor
+const enviarSolicitudGestor = async () => {
+  try {
+    const token = authStore.authToken;
+    if (!token) throw new Error('No hay token disponible');
+
+    await $axios.post(
+      '/accounts/solicitar-gestor/',
+      {
+        nombre_tienda: datosGestor.value.nombre_tienda,
+        identificacion_fiscal: datosGestor.value.identificacion_fiscal,
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    usuario.value.solicitud_gestor = true;
+    alert('Solicitud enviada con éxito');
+  } catch (error) {
+    console.error('Error al enviar solicitud:', error);
+    alert('Ocurrió un error al enviar la solicitud');
+  }
 };
 
 onMounted(() => {
@@ -231,7 +298,6 @@ onMounted(() => {
   align-items: center;
   justify-items: center;
 }
-
 
 /* Contenido principal */
 .content-wrapper {
@@ -325,6 +391,16 @@ onMounted(() => {
   border: none;
 }
 
+.vendor-request-section {
+  margin-top: 20px;
+  border-top: 1px solid #ddd;
+  padding-top: 20px;
+}
+
+.vendor-request-status {
+  margin-top: 20px;
+  color: #555;
+}
 
 .social-icons {
   display: flex;
