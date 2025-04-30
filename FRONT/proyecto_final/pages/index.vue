@@ -5,7 +5,7 @@
 
     <!-- Barra de navegación con menú desplegable -->
     <div class="nav-bar">
-      <Navbar/>
+      <Navbar />
     </div>
 
     <!-- Contenido principal -->
@@ -13,15 +13,41 @@
       <!-- Sección destacada -->
       <section class="hero-section">
         <h2>Productos Destacados</h2>
+
+        <!-- Barra de filtrado -->
+        <div class="filter-bar">
+          <input
+            type="text"
+            v-model="filtroNombre"
+            placeholder="Buscar por nombre..."
+            @input="changePage(1)"
+            class="search-input"
+          />
+          <select
+            v-model="ordenPrecio"
+            @change="changePage(1)"
+            class="order-select"
+          >
+            <option value="">Ordenar por...</option>
+            <option value="asc">Precio más bajo</option>
+            <option value="desc">Precio más alto</option>
+          </select>
+        </div>
+
+        <!-- Lista de productos -->
         <div class="product-grid">
           <ProductoList :productos="paginatedProducts" />
         </div>
 
         <!-- Paginación (solo si hay más productos) -->
         <div v-if="productos.length > itemsPerPage" class="pagination">
-          <button @click="changePage(page - 1)" :disabled="page === 1">Anterior</button>
+          <button @click="changePage(page - 1)" :disabled="page === 1">
+            Anterior
+          </button>
           <span>{{ page }} de {{ totalPages }}</span>
-          <button @click="changePage(page + 1)" :disabled="page === totalPages">Siguiente</button>
+          <button @click="changePage(page + 1)" :disabled="page === totalPages">
+            Siguiente
+          </button>
         </div>
       </section>
     </div>
@@ -42,30 +68,32 @@ import { navigateTo, useNuxtApp } from '#app';
 const user = ref(null);
 const productos = ref([]);
 const page = ref(1);
-const itemsPerPage = 6; // 3 productos por fila, 2 filas
+const itemsPerPage = 6;
 
 const { $axios } = useNuxtApp();
 const route = useRoute();
 
-// Función para obtener los productos de la API, filtrando por categoría si se indica
+// Función para obtener productos
 const fetchProductos = async () => {
-   try {
-     const categoriaId = route.query.categoria;
-     console.log('ID de categoría:', categoriaId); // Verifica el ID de categoría
-     let response;
-     if (categoriaId) {
-       response = await $axios.get('products/productos', { params: { categoria: categoriaId } });
-     } else {
-       response = await $axios.get('products/productos');
-     }
-     productos.value = response.data;
-     page.value = 1; // Reinicia la página al cambiar de categoría
-   } catch (err) {
-     console.error('Error cargando datos de la API:', err);
-   }
- };
+  try {
+    const categoriaId = route.query.categoria;
+    console.log('ID de categoría:', categoriaId);
+    let response;
+    if (categoriaId) {
+      response = await $axios.get('products/productos', {
+        params: { categoria: categoriaId },
+      });
+    } else {
+      response = await $axios.get('products/productos');
+    }
+    productos.value = response.data;
+    page.value = 1;
+  } catch (err) {
+    console.error('Error cargando datos de la API:', err);
+  }
+};
 
-// Verificar la sesión del usuario
+// Verificar sesión del usuario
 if (import.meta.client) {
   onMounted(() => {
     const authToken = sessionStorage.getItem('authToken');
@@ -88,12 +116,12 @@ if (import.meta.client) {
   });
 }
 
-// Obtener productos al montar la página
+// Obtener productos al montar
 onMounted(() => {
   fetchProductos();
 });
 
-// Observar cambios en la query (por ejemplo, cuando se selecciona otra categoría)
+// Observar cambios en la categoría
 watch(
   () => route.query.categoria,
   () => {
@@ -101,14 +129,37 @@ watch(
   }
 );
 
-// Paginación: Obtener los productos para la página actual
+// Filtros
+const filtroNombre = ref('');
+const ordenPrecio = ref('');
+
+// Productos filtrados
+const productosFiltrados = computed(() => {
+  let resultado = productos.value;
+
+  if (filtroNombre.value.trim()) {
+    resultado = resultado.filter((producto) =>
+      producto.titulo.toLowerCase().includes(filtroNombre.value.toLowerCase())
+    );
+  }
+
+  if (ordenPrecio.value === 'asc') {
+    resultado = resultado.sort((a, b) => a.precio - b.precio);
+  } else if (ordenPrecio.value === 'desc') {
+    resultado = resultado.sort((b, a) => a.precio - b.precio);
+  }
+
+  return resultado;
+});
+
+// Productos paginados
 const paginatedProducts = computed(() => {
   const start = (page.value - 1) * itemsPerPage;
   const end = page.value * itemsPerPage;
-  return productos.value.slice(start, end);
+  return productosFiltrados.value.slice(start, end);
 });
 
-// Número total de páginas
+// Total de páginas
 const totalPages = computed(() => {
   return Math.ceil(productos.value.length / itemsPerPage);
 });
@@ -120,7 +171,7 @@ const changePage = (newPage) => {
   }
 };
 
-// Función para cerrar sesión
+// Cerrar sesión
 const logout = () => {
   if (import.meta.client) {
     sessionStorage.removeItem('authToken');
@@ -136,15 +187,13 @@ const logout = () => {
 
 .page-container {
   min-height: 100vh;
-  justify-items: center; /* Centrar los elementos */
+  justify-items: center;
 }
-
-
 
 /* Nav Bar */
 .nav-bar {
   width: 100%;
-  justify-content: center; /* Centrar el contenido */
+  justify-content: center;
 }
 
 /* Contenido principal */
@@ -155,8 +204,7 @@ const logout = () => {
   align-items: center;
   gap: 30px;
   width: 100%;
-  max-width: 1200px; /* Limitar el ancho máximo */
-  
+  max-width: 1200px;
 }
 
 .hero-section {
@@ -171,10 +219,9 @@ const logout = () => {
 }
 
 .product-grid {
-  
   gap: 20px;
   width: 100%;
-  max-width: 1200px; /* Limitar el ancho máximo */
+  max-width: 1200px;
 }
 
 .pagination {
@@ -209,27 +256,25 @@ const logout = () => {
   }
 }
 
-
-
 /* Responsive */
 @media (max-width: 768px) {
   .page-container {
-    grid-template-areas: 
-      "header"
-      "nav"
-      "content"
-      "footer";
+    grid-template-areas:
+      'header'
+      'nav'
+      'content'
+      'footer';
     grid-template-columns: 1fr;
   }
 
   .nav-bar {
     overflow-x: auto;
     white-space: nowrap;
-    justify-content: center; /* Centrar el contenido */
+    justify-content: center;
   }
 
   .product-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Ajuste para móviles */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
 }
 </style>
