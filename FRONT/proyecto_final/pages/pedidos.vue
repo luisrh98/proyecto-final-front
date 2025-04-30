@@ -68,19 +68,28 @@
   
   // Función para obtener los pedidos del usuario
   const fetchPedidos = async () => {
-    try {
-      const token = authStore.authToken
-      if (!token) throw new Error('No hay token disponible')
-      // Llama al endpoint que devuelve los pedidos del usuario
-      const { data } = await $axios.get('/orders/mis-pedidos/', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      pedidos.value = data
-    } catch (error) {
-      console.error('Error al cargar pedidos:', error)
-      router.push('/login') // Redirige a login si falla la autenticación
-    }
+  try {
+    const token = authStore.authToken;
+    if (!token) throw new Error('No hay token disponible');
+    
+    // Llama al endpoint que devuelve los pedidos del usuario
+    const { data } = await $axios.get('/orders/mis-pedidos/', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    // Log para inspeccionar los datos completos de los pedidos
+    console.log('Datos de pedidos recibidos del backend:', data);
+
+    // Asigna los datos a la variable reactiva
+    pedidos.value = data;
+
+    // Log para confirmar que los datos se asignaron correctamente
+    console.log('Pedidos almacenados en la variable reactiva:', pedidos.value);
+  } catch (error) {
+    console.error('Error al cargar pedidos:', error);
+    router.push('/login'); // Redirige a login si falla la autenticación
   }
+};
   
   onMounted(() => {
     // Cargar los tokens y verificar que el usuario esté autenticado
