@@ -162,9 +162,8 @@ const crearProducto = async () => {
   formData.append('imagen', nuevoProducto.value.imagen);
 
   try {
-    await $axios.post('/products/productos/', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    await $axios.post('/products/productos/', formData);
+
     await fetchMisProductos();
     resetForm();
     alert('Producto creado exitosamente.');
