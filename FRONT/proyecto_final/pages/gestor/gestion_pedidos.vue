@@ -11,7 +11,7 @@
           <div class="product-info">
             <h3>{{ producto.titulo }}</h3>
             <p>Precio: ${{ producto.precio }}</p>
-            <p>Categoría: {{ producto.categoria.nombre }}</p>
+            <p>Categoría: {{ producto.categoria }}</p>
           </div>
         </div>
       </div>
@@ -88,6 +88,8 @@ const nuevoProducto = ref({
 
 // Fetch inicial
 onMounted(() => {
+  authStore.cargarTokensDesdeSession();
+
   if (!authStore.isLoggedIn) {
     alert('Debes iniciar sesión para acceder a esta página.');
     router.push('/login');

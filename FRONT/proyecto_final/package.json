@@ -19,6 +19,7 @@
     "nuxt": "^3.16.2",
     "nuxt-stripe-module": "^3.2.0",
     "pinia": "^3.0.1",
+    "pinia-plugin-persistedstate": "^4.2.0",
     "stripe": "^18.0.0",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
