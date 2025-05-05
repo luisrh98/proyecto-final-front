@@ -3,37 +3,37 @@
   <Navbar />
   <div class="payment-page">
     <div class="payment-container">
-      <h1>Realiza el Pago</h1>
+      <h1 class="text-center text-3xl font-bold mb-6">Realiza el Pago</h1>
 
       <!-- Formulario de Dirección -->
-      <div class="address-form">
-        <h2>Dirección de Envío</h2>
-        <form @submit.prevent="guardarDireccion">
+      <div class="address-form mb-8">
+        <h2 class="text-2xl font-semibold mb-4 text-center">Dirección de Envío</h2>
+        <form @submit.prevent="guardarDireccion" class="form-address">
           <div class="form-group">
             <label for="calle">Calle:</label>
-            <input v-model="direccion.calle" id="calle" type="text" required />
+            <input v-model="direccion.calle" id="calle" type="text" required class="input-field" />
           </div>
           <div class="form-group">
             <label for="ciudad">Ciudad:</label>
-            <input v-model="direccion.ciudad" id="ciudad" type="text" required />
+            <input v-model="direccion.ciudad" id="ciudad" type="text" required class="input-field" />
           </div>
           <div class="form-group">
             <label for="codigo_postal">Código Postal:</label>
-            <input v-model="direccion.codigo_postal" id="codigo_postal" type="text" required />
+            <input v-model="direccion.codigo_postal" id="codigo_postal" type="text" required class="input-field" />
           </div>
           <div class="form-group">
             <label for="pais">País:</label>
-            <input v-model="direccion.pais" id="pais" type="text" required />
+            <input v-model="direccion.pais" id="pais" type="text" required class="input-field" />
           </div>
           <button type="submit" class="btn btn-primary">Guardar Dirección</button>
         </form>
       </div>
 
       <!-- Selector de método de pago -->
-      <form @submit.prevent="handleSubmit">
-        <div>
-          <label for="metodoPago">Método de pago:</label>
-          <select v-model="metodoPagoId" id="metodoPago" required>
+      <form @submit.prevent="handleSubmit" class="form-payment">
+        <div class="mb-6">
+          <label for="metodoPago" class="text-lg">Método de pago:</label>
+          <select v-model="metodoPagoId" id="metodoPago" required class="input-select">
             <option v-for="metodo in metodosPago" :key="metodo.id" :value="metodo.id">
               {{ metodo.nombre }}
             </option>
@@ -45,7 +45,8 @@
 
         <button type="submit" class="btn btn-accent">Pagar</button>
       </form>
-      <p v-if="errorMsg" class="error">{{ errorMsg }}</p>
+
+      <p v-if="errorMsg" class="error mt-4">{{ errorMsg }}</p>
     </div>
   </div>
   <Footer />
@@ -210,61 +211,81 @@ const handleSubmit = async () => {
 };
 </script>
 
-<style scoped lang="scss">
-@import '../../assets/scss/_variables.scss';
-@import '../../assets/scss/global.scss';
-
+<style scoped>
 .payment-page {
-  background: $white;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #f8f9fa;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  text-align: center;
-
-  h1 {
-    margin-bottom: 1.5rem;
-    font-size: 2rem;
-  }
-
-  .payment-container {
-    form {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .card-element {
-      width: 100%;
-      max-width: 400px;
-      padding: 1rem;
-      border: 1px solid lighten($gray, 20%);
-      border-radius: 6px;
-    }
-
-    .error {
-      color: red;
-      margin-top: 1rem;
-    }
-  }
-
-  .address-form {
-    margin-bottom: 2rem;
-
-    .form-group {
-      margin-bottom: 1rem;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-    }
-
-    input {
-      width: 100%;
-      padding: 0.5rem;
-      border: 1px solid lighten($gray, 20%);
-      border-radius: 6px;
-    }
-  }
 }
+
+.payment-container {
+  width: 100%;
+  text-align: center;
+}
+
+.form-address {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+label {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.input-field, .input-select {
+  width: 100%; /* Aseguramos que los campos se adapten al contenedor */
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  box-sizing: border-box; /* Aseguramos que padding no afecte el tamaño */
+}
+
+.input-field {
+  width: 100%;
+}
+
+.input-select {
+  max-width: 100%; /* Hace que el select también ocupe el 100% de su contenedor */
+}
+
+.btn {
+  background: #4C9F70;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  width: auto;  /* Botón ajustado al contenido */
+  text-transform: uppercase;
+  font-weight: bold;
+  border: none;
+  transition: background 0.3s;
+  margin: 0.5rem auto;  /* Centrado automático */
+}
+
+.btn:hover {
+  background: #388E58;
+}
+
+.card-element {
+  margin-top: 1.5rem;
+}
+
+.error {
+  font-size: 1rem;
+  color: #e74c3c;
+  margin-top: 1rem;
+}
+
 </style>

@@ -1,53 +1,69 @@
 <template>
-  <nav class="navbar">
-    <div class="container">
+  <nav class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
       <!-- Logo -->
-      <NuxtLink to="/" class="logo">Mi Tienda</NuxtLink>
+      <NuxtLink to="/" class="text-2xl font-bold tracking-wider hover:text-indigo-100 transition duration-300">
+        Inicio
+      </NuxtLink>
       
       <!-- Contenedor de acciones -->
-      <div class="nav-actions">
+      <div class="flex gap-4 items-center space-x-6">
         <!-- Menú Categorías -->
-        <div class="dropdown">
-          <button class="nav-btn btn-primary">
-            Categorías 
-            <Icon name="mdi:menu-down" class="icon" />
+        <div class="relative">
+          <button class="nav-btn bg-indigo-700 hover:bg-indigo-800 px-4 py-2 rounded-full text-white flex items-center gap-2 focus:outline-none">
+            Categorías
+            <Icon name="mdi:menu-down" class="text-xl" />
           </button>
-          <div class="dropdown-menu">
-            <div class="menu-inner">
+          <div class="dropdown-menu absolute hidden bg-white text-gray-800 rounded-lg shadow-lg mt-2 w-48 z-10">
+            <div class="py-2">
               <NuxtLink 
                 :to="{ path: '/' }" 
-                class="menu-item"
+                class="menu-item block px-4 py-2 hover:bg-indigo-500 hover:text-white transition duration-200"
               >
-              Mostrar todo
+                Mostrar todo
               </NuxtLink>
               <NuxtLink 
                 v-for="cat in categorias" 
                 :key="cat.id" 
                 :to="{ path: '/', query: { categoria: cat.id } }" 
-                class="menu-item"
+                class="menu-item block px-4 py-2 hover:bg-indigo-500 hover:text-white transition duration-200"
               >
                 {{ cat.nombre }}
               </NuxtLink>
             </div>
           </div>
         </div>
-        <!-- Botón administrador -->
-        <NuxtLink to="/panel_administrador" class="nav-btn btn-accent">
-          <button name="mdi:account-circle" class="icon" />
+        
+        <!-- Botones de navegación -->
+        <NuxtLink 
+          to="/panel_administrador" 
+          class="nav-btn bg-purple-700 hover:bg-purple-800 text-white rounded-full py-2 px-4 flex items-center gap-2 transition duration-300"
+        >
+          <Icon name="mdi:account-circle" class="text-xl" />
           Panel administrador
         </NuxtLink>
-        <!-- Botón Gestión Pedidos -->
-        <NuxtLink to="/gestor/gestion_pedidos" class="nav-btn btn-accent">
-          <button name="mdi:account-circle" class="icon" />
+        
+        <NuxtLink 
+          to="/gestor/gestion_pedidos" 
+          class="nav-btn bg-purple-700 hover:bg-purple-800 text-white rounded-full py-2 px-4 flex items-center gap-2 transition duration-300"
+        >
+          <Icon name="mdi:account-circle" class="text-xl" />
           Gestionar productos
         </NuxtLink>
-        <!-- Botón Perfil -->
-        <NuxtLink to="/perfil" class="nav-btn btn-accent">
-          <button name="mdi:account-circle" class="icon" />
+
+        <NuxtLink 
+          to="/perfil" 
+          class="nav-btn bg-purple-700 hover:bg-purple-800 text-white rounded-full py-2 px-4 flex items-center gap-2 transition duration-300"
+        >
+          <Icon name="mdi:account-circle" class="text-xl" />
           Perfil
         </NuxtLink>
-        <NuxtLink to="/pedidos" class="nav-btn btn-accent">
-          <button name="mdi:account-circle" class="icon" />
+
+        <NuxtLink 
+          to="/pedidos" 
+          class="nav-btn bg-purple-700 hover:bg-purple-800 text-white rounded-full py-2 px-4 flex items-center gap-2 transition duration-300"
+        >
+          <Icon name="mdi:account-circle" class="text-xl" />
           Mis pedidos
         </NuxtLink>
       </div>
@@ -64,7 +80,7 @@ const categorias = ref([]);
 const fetchCategorias = async () => {
   try {
     const { data } = await $axios.get('/products/categorias/');
-    categorias.value = data.slice(0, 10);
+    categorias.value = data.slice(0, 10);  // Limitar a las primeras 10 categorías
   } catch (error) {
     console.error("Error fetching categorias:", error);
   }
@@ -73,115 +89,24 @@ const fetchCategorias = async () => {
 onMounted(fetchCategorias);
 </script>
 
-<style scoped lang="scss">
-@import '../assets/scss/_variables.scss';
-@import '../assets/scss/global.scss';
+<style scoped>
+/* Estilos para el dropdown */
+.nav-btn:hover + .dropdown-menu, .dropdown-menu:hover {
+  display: block;
+}
+.dropdown-menu {
+  display: none;
+}
 
-.navbar {
-  position: sticky;
-  top: 0;
-  background: rgba($secondary, 0.90);
-  backdrop-filter: blur(6px);
-  z-index: 1000;
-  padding: 0.5rem;
-  transition: all 0.3s;
-  width: 100%;
-  border-bottom-right-radius: 12px;
-  border-bottom-left-radius: 12px;
-  
-  
-  .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%; // Eliminado el límite de 1200px [[6]]
-    margin: 0 auto;
-    padding: 0 2rem; // Espaciado lateral mantenido [[8]]
-  }
-
-  .logo {
-    font-size: 1.75rem;
-    color: $white;
-    transition: color 0.3s;
-    
-    &:hover {
-      color: $accent;
-    }
-  }
-
-  .nav-actions {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    flex-wrap: nowrap;
-  }
-
-  .nav-btn {
-    display: flex;
-    align-items: center;
-    padding: 12px 24px;
-    background: none;
-    border: none;
-    color: $white;
-    transition: all 0.3s;
-    
-    .icon {
-      margin-left: 0.5rem;
-      transition: transform 0.3s;
-    }
-  }
-
-  .dropdown {
-    position: relative;
-    
-    &:hover {
-      .icon {
-        transform: rotate(-180deg);
-      }
-    }
-  }
-
-  .dropdown-menu {
-    position: absolute;
-    top: 110%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: $secondary;
-    border-radius: 12px;
-    min-width: 200px;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s;
-    
-    .menu-inner {
-      max-height: 400px;
-      overflow-y: auto;
-      scrollbar-color: $white;
-    }
-  }
-
-  .dropdown:hover .dropdown-menu {
-    top: 100%;
-    opacity: 1;
-    visibility: visible;
-  }
-
-  .menu-item {
-    display: flex;
-    padding: 12px 20px;
-    width: 100%;
-    color: $white;
-    transition: all 0.3s;
-    
-    &:hover {
-      background: $primary;
-      transform: translateX(10px);
-    }
-    
-    &.router-link-active {
-      background: $accent;
-      font-weight: 600;
-    }
-  }
+/* Estilo general para los items de menú */
+.menu-item {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  color: #4B5563;
+  text-decoration: none;
+}
+.menu-item:hover {
+  background-color: #5B21B6; /* Fondo hover */
+  color: white;
 }
 </style>

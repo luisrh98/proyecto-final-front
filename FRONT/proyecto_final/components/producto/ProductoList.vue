@@ -1,43 +1,52 @@
 <template>
-  <div class="productos-list-wrapper fade-in">
-    <!-- Botón o link para ir al carrito (puede ubicarse en la cabecera o aquí) -->
-    <div class="cart-link-wrapper">
-      <NuxtLink to="/carrito" class="btn btn-cart">
-        <!-- Puedes usar un ícono aquí en lugar de texto -->
-        Carrito ({{ cartStore.totalItems }})
+  <div class="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 py-10 px-4 flex flex-col items-center justify-center">
+    
+    <!-- Botón carrito -->
+    <div class="mb-8">
+      <NuxtLink to="/carrito" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full shadow-lg hover:scale-105 transition-transform duration-300">
+        🛒 Carrito ({{ cartStore.totalItems }})
       </NuxtLink>
     </div>
-  
-    <div v-if="productos.length > 0" class="productos-list">
-      <div v-for="producto in productos" :key="producto.id" class="producto">
-        <div class="product-card">
-          <img v-if="producto.imagen" :src="producto.imagen" :alt="producto.titulo" class="product-image" />
-          <div class="product-info">
-            <h3 class="product-title">{{ producto.titulo }}</h3>
-            <p class="product-description">{{ producto.descripcion }}</p>
-            <div class="product-details">
+
+    <!-- Lista de productos -->
+    <div v-if="productos.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
+      <div v-for="producto in productos" :key="producto.id" class="transform transition-transform duration-300 hover:-translate-y-1">
+        <div class="bg-white rounded-xl shadow-md overflow-hidden flex flex-col h-full hover:shadow-xl transition-shadow duration-300">
+          <img
+            v-if="producto.imagen"
+            :src="producto.imagen"
+            :alt="producto.titulo"
+            class="h-48 w-full object-cover"
+          />
+          <div class="p-6 flex flex-col flex-grow">
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ producto.titulo }}</h3>
+            <p class="text-gray-600 text-sm flex-grow">{{ producto.descripcion }}</p>
+            <div class="text-sm text-gray-700 mt-4 space-y-1">
               <p><strong>Precio:</strong> ${{ producto.precio }}</p>
-              <p><strong>Categoría:</strong> {{ producto.categoria.nombre }}</p>
+              <p><strong>Categoría:</strong> {{ producto.categoria }}</p>
             </div>
-            <div class="button-group">
-              <NuxtLink :to="`/producto/${producto.id}`" class="btn btn-secondary small btn-accent">
+            <div class="mt-6 flex gap-2">
+              <NuxtLink :to="`/producto/${producto.id}`" class="flex-1 text-center px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 transition-colors duration-300">
                 Ver producto
               </NuxtLink>
-              <!-- Se agrega el método addToCart enviando el producto -->
-              <button class="btn btn-accent" @click="addToCart(producto)">Añadir al carrito</button>
+              <button @click="addToCart(producto)" class="flex-1 px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors duration-300">
+                Añadir
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
-  
-    <!-- Mensaje si no hay productos -->
-    <div v-else class="no-products">No hay productos disponibles.</div>
-  
-    <!-- Notificación: se muestra el mensaje cuando hay algo en "message" -->
-    <div v-if="message" class="notification">
-      {{ message }}
-    </div>
+
+    <!-- Sin productos -->
+    <div v-else class="text-gray-600 text-lg mt-10">No hay productos disponibles.</div>
+
+    <!-- Notificación -->
+    <transition name="fade">
+      <div v-if="message" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white shadow-lg border border-gray-200 px-6 py-3 rounded-full text-gray-800">
+        {{ message }}
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -49,207 +58,27 @@ defineProps({
   }
 });
 
-// Importa el store del carrito
 import { useCartStore } from '@/stores/cart';
-
-// Obtén el store
 const cartStore = useCartStore();
-
-// Ref para el mensaje de notificación
 const message = ref('');
 
-// Función para agregar un producto al carrito
 const addToCart = (producto) => {
-  // Puedes definir una cantidad fija o bien implementar un input para elegir cantidad.
   const cantidad = 1;
   cartStore.addItem(producto, cantidad);
-  
-  // Mostrar notificación
   message.value = `Se ha añadido ${cantidad} unidad(es) de "${producto.titulo}" al carrito.`;
-  // Limpiar el mensaje después de 3 segundos
   setTimeout(() => {
     message.value = '';
   }, 3000);
-  
-  console.log(`Se agregó ${cantidad} unidad(es) de "${producto.titulo}" al carrito.`);
 };
 </script>
 
-<style scoped lang="scss">
-@import '../../assets/scss/_variables.scss';
-@import '../../assets/scss/global.scss';
-
-/* Estilo para el botón o link del carrito */
-.cart-link-wrapper {
-  width: 100%;
-  text-align: right;
-  padding: 1rem;
-  
-  .btn-cart {
-    background: $secondary;
-    color: $white;
-    padding: 10px 20px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: bold;
-    
-    &:hover {
-      background: lighten($secondary, 10%);
-    }
-  }
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
 }
-
-.productos-list-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 30px;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.productos-list {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
-  width: 100%;
-  justify-items: center;
-  max-width: 100%;
-  margin: 0 auto;
-}
-
-.producto {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-.product-card {
-  background: $white;
-  border-radius: 12px;
-  box-shadow: $box-shadow;
-  overflow: hidden;
-  transition: $transition;
-  width: 100%;
-  max-width: 300px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  
-    .btn-accent {
-      transform: scale(1.05);
-    }
-  }
-  
-  .product-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    transition: $transition;
-  }
-  
-  .product-info {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-  }
-  
-  .product-title {
-    font-family: $font-display;
-    font-size: 1.2rem;
-    color: $dark;
-    margin-bottom: 10px;
-    transition: $transition;
-  }
-  
-  .product-description {
-    color: $dark;
-    font-size: 0.9rem;
-    margin-bottom: 10px;
-  }
-  
-  .product-details {
-    margin-bottom: 15px;
-    font-size: 1rem;
-    color: $dark;
-  }
-  
-  .button-group {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 10px;
-  }
-  
-  .btn {
-    border-radius: 8px;
-    padding: 14px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    width: 100%;
-  }
-  
-  .btn-accent {
-    background: linear-gradient(135deg, $accent 0%, #e67e22 100%);
-    color: $white;
-    box-shadow: $box-shadow;
-  
-    &:hover {
-      opacity: 0.9;
-    }
-  }
-  
-  .btn-secondary {
-    background: $secondary;
-    color: $white;
-    font-size: 0.9rem;
-    
-    &:hover {
-      background: lighten($secondary, 10%);
-    }
-  }
-  
-  .small {
-    padding: 10px;
-  }
-}
-
-.pagination-wrapper {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  padding: 20px;
-  
-  .btn {
-    padding: 10px 20px;
-    font-size: 1rem;
-  }
-}
-
-.no-products {
-  text-align: center;
-  font-size: 1.2rem;
-  color: $gray;
-  padding: 20px;
-}
-
-/* Estilo para la notificación */
-.notification {
-  background: #4caf50;
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 4px;
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

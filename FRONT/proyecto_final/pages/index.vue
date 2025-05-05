@@ -1,7 +1,8 @@
 <template>
   <div class="page-container">
+
     <!-- Cabecera -->
-    <Header></Header>
+    <Header />
 
     <!-- Barra de navegación con menú desplegable -->
     <div class="nav-bar">
@@ -9,24 +10,25 @@
     </div>
 
     <!-- Contenido principal -->
-    <div class="content-wrapper">
+    <div class="content-wrapper py-12 px-6">
       <!-- Sección destacada -->
-      <section class="hero-section">
-        <h2>Productos Destacados</h2>
+      <section class="hero-section text-center">
+
+        <h2 class="text-3xl font-bold mb-8">Productos Destacados</h2>
 
         <!-- Barra de filtrado -->
-        <div class="filter-bar">
+        <div class="filter-bar mb-12 flex flex-col md:flex-row items-center justify-center gap-6">
           <input
             type="text"
             v-model="filtroNombre"
             placeholder="Buscar por nombre..."
             @input="changePage(1)"
-            class="search-input"
+            class="search-input py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full md:w-1/3"
           />
           <select
             v-model="ordenPrecio"
             @change="changePage(1)"
-            class="order-select"
+            class="order-select py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full md:w-1/4"
           >
             <option value="">Ordenar por...</option>
             <option value="asc">Precio más bajo</option>
@@ -35,17 +37,27 @@
         </div>
 
         <!-- Lista de productos -->
-        <div class="product-grid">
+        <div class="product-list-container mb-12">
           <ProductoList :productos="paginatedProducts" />
         </div>
 
         <!-- Paginación (solo si hay más productos) -->
-        <div v-if="productos.length > itemsPerPage" class="pagination">
-          <button @click="changePage(page - 1)" :disabled="page === 1">
+        <div v-if="productos.length > itemsPerPage" class="pagination flex justify-center items-center gap-6 mt-8">
+          <button
+            @click="changePage(page - 1)"
+            :disabled="page === 1"
+            class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 disabled:text-gray-500 transition duration-300"
+          >
             Anterior
           </button>
-          <span>{{ page }} de {{ totalPages }}</span>
-          <button @click="changePage(page + 1)" :disabled="page === totalPages">
+          <span class="text-lg font-semibold">
+            Página {{ page }} de {{ totalPages }}
+          </span>
+          <button
+            @click="changePage(page + 1)"
+            :disabled="page === totalPages"
+            class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 disabled:text-gray-500 transition duration-300"
+          >
             Siguiente
           </button>
         </div>
@@ -53,7 +65,7 @@
     </div>
 
     <!-- Footer -->
-    <Footer></Footer>
+    <Footer />
   </div>
 </template>
 
@@ -77,7 +89,6 @@ const route = useRoute();
 const fetchProductos = async () => {
   try {
     const categoriaId = route.query.categoria;
-    console.log('ID de categoría:', categoriaId);
     let response;
     if (categoriaId) {
       response = await $axios.get('products/productos', {
@@ -181,100 +192,3 @@ const logout = () => {
 };
 </script>
 
-<style lang="scss" scoped>
-@import '../assets/scss/_variables.scss';
-@import '../assets/scss/global.scss';
-
-.page-container {
-  min-height: 100vh;
-  justify-items: center;
-}
-
-/* Nav Bar */
-.nav-bar {
-  width: 100%;
-  justify-content: center;
-}
-
-/* Contenido principal */
-.content-wrapper {
-  grid-area: content;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 30px;
-  width: 100%;
-  max-width: 1200px;
-}
-
-.hero-section {
-  background: $white;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: $box-shadow;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.product-grid {
-  gap: 20px;
-  width: 100%;
-  max-width: 1200px;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 20px;
-
-  button {
-    padding: 10px 20px;
-    background: $accent;
-    border: none;
-    color: white;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-
-    &:hover {
-      background: darken($accent, 10%);
-    }
-
-    &:disabled {
-      background: $gray;
-      cursor: not-allowed;
-    }
-  }
-
-  span {
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-  }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .page-container {
-    grid-template-areas:
-      'header'
-      'nav'
-      'content'
-      'footer';
-    grid-template-columns: 1fr;
-  }
-
-  .nav-bar {
-    overflow-x: auto;
-    white-space: nowrap;
-    justify-content: center;
-  }
-
-  .product-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
-}
-</style>

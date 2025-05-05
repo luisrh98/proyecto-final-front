@@ -11,6 +11,7 @@
           min="1" 
           max="5" 
           required
+          class="form-input"
         />
       </div>
       <div class="form-group">
@@ -20,6 +21,7 @@
           rows="4" 
           placeholder="Cuéntanos tu experiencia..."
           required
+          class="form-input"
         ></textarea>
       </div>
       <button @click="submitReview" class="btn-submit">Enviar reseña</button>
@@ -46,7 +48,7 @@
 import { ref, onMounted } from 'vue'
 import { useNuxtApp } from '#app'
 import { useRoute } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'; // ← Importa el store de autenticación
+import { useAuthStore } from '@/stores/auth' // ← Store de autenticación
 
 const authStore = useAuthStore();
 
@@ -88,6 +90,11 @@ const formatDate = (dateString) => {
 
 // Enviar nueva reseña
 const submitReview = async () => {
+  if (!authStore.isLoggedIn) {
+    alert("Debes iniciar sesión para dejar una reseña.");
+    return;
+  }
+
   try {
     await $axios.post('/products/reseñas/', {
       producto: props.productId,
@@ -95,12 +102,28 @@ const submitReview = async () => {
       comentario: newReview.value.comentario
     }, {
       headers: { 
-        Authorization: `Bearer ${sessionStorage.getItem('auth_token')}`  // ← Clave para autenticación
+        Authorization: `Bearer ${authStore.authToken}`  // ← Usando el token del store
       }
     });
-    // ...
+    // Recargar las reseñas tras enviar una nueva
+    await loadReviews();
+    newReview.value.rating = 5;
+    newReview.value.comentario = '';
   } catch (error) {
-    console.error('Error:', error.response?.data);
+    console.error('Error al enviar reseña:', error);
+    alert("Hubo un error al enviar tu reseña. Intenta de nuevo.");
+  }
+}
+
+// Función para cargar las reseñas
+const loadReviews = async () => {
+  try {
+    const { data } = await $axios.get(`/products/reseñas/`, {
+      params: { producto: props.productId }
+    })
+    reviews.value = data
+  } catch (error) {
+    console.error('Error al cargar reseñas:', error)
   }
 }
 </script>
@@ -114,8 +137,49 @@ const submitReview = async () => {
   border-radius: 12px;
 }
 
+.review-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 .form-group {
   margin: 1rem 0;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  resize: none;
+  transition: border-color 0.3s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #4C9F70;
+}
+
+.btn-submit {
+  background: #28a745;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  cursor: pointer;
+  border: none;
+  transition: background 0.3s ease;
+}
+
+.btn-submit:hover {
+  background: #218838;
+}
+
+.reviews-list {
+  margin-top: 2rem;
 }
 
 .review-item {
@@ -128,10 +192,23 @@ const submitReview = async () => {
   margin-right: 1rem;
 }
 
-.btn-submit {
-  background: #28a745;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
+.no-reviews {
+  color: #999;
+}
+
+.comment {
+  font-size: 1rem;
+  color: #555;
+}
+
+.review-header {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.date {
+  font-size: 0.9rem;
+  color: #888;
 }
 </style>
