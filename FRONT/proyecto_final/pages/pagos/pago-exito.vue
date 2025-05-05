@@ -6,20 +6,31 @@
 
     <!-- Información de la factura -->
     <div v-if="factura" class="mt-6 text-left">
-      <h3 class="text-2xl font-semibold mb-4">Factura</h3>
-      <p><strong>ID de Factura:</strong> {{ factura.id }}</p>
+      <h3 class="text-2xl font-semibold mb-4">Pedido</h3>
+      <p><strong>ID de Pedido:</strong> {{ factura.id }}</p>
       <p><strong>Cantidad:</strong> {{ factura.amount_paid / 100 }} {{ factura.currency.toUpperCase() }}</p>
       <p><strong>Estado:</strong> {{ factura.status }}</p>
       <p><strong>Fecha de emisión:</strong> {{ factura.created | formatDate }}</p>
+    </div>
+    <div v-if="factura" class="mt-6 text-left">
+      <h3 class="text-2xl font-semibold mb-4">Puedes descargar las factura en la sección de mis pedidos.</h3>
+      
     </div>
 
     <!-- Mensaje de error -->
     <p v-if="errorMsg" class="text-red-600 mt-4">{{ errorMsg }}</p>
 
     <!-- Botón para volver al inicio -->
-    <button @click="volverAInicio" class="mt-6 px-6 py-2 bg-green-600 text-white rounded-lg font-bold text-lg hover:bg-green-700 transition duration-300">
+    <div>
+      <button @click="volverAPedidos" class="mt-6 px-6 py-2 bg-green-600 text-white rounded-lg font-bold text-lg hover:bg-green-700 transition duration-300">
+      Mis pedidos
+    </button>
+    </div>
+    <div>
+      <button @click="volverAInicio" class="mt-6 px-6 py-2 bg-green-600 text-white rounded-lg font-bold text-lg hover:bg-green-700 transition duration-300">
       Volver al Inicio
     </button>
+    </div>
   </div>
 </template>
 
@@ -61,5 +72,9 @@ onMounted(async () => {
 
 const volverAInicio = () => {
   router.push('/');
+};
+
+const volverAPedidos = () => {
+  router.push('/pedidos');
 };
 </script>

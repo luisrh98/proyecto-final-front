@@ -90,8 +90,8 @@ const removeItem = (productId) => {
 // Función para proceder al pago
 const checkout = async () => {
   try {
-    const amountInCents = totalPrice.value * 100  // Convertir el total a centavos
-    const currency = 'usd' // Asumir que la moneda es USD
+    const amountInCents = totalPrice.value * 100;  // Convertir el total a centavos
+    const currency = 'usd'; // Asumir que la moneda es USD
 
     // Llamar al backend para crear el Payment Intent
     const response = await $axios.post('/orders/create-payment-intent/', {
@@ -101,23 +101,29 @@ const checkout = async () => {
         producto_id: item.product.id,
         cantidad: item.quantity,
       }))
-    })
+    });
+
+    console.log('Respuesta del backend:', response.data); // Imprimir respuesta del backend
+
+    const clientSecret = response.data.clientSecret;
+    if (!clientSecret) {
+      throw new Error('No se obtuvo un clientSecret válido del backend.');
+    }
 
     // Redirigir a la página de pago de Stripe
-    const clientSecret = response.data.clientSecret
-    const stripe = Stripe(config.public.stripePublicKey)
-    const { error } = await stripe.confirmCardPayment(clientSecret)
+    const stripe = Stripe(config.public.stripePublicKey);
+    const { error } = await stripe.confirmCardPayment(clientSecret);
 
     if (error) {
-      console.error('Error al procesar el pago:', error)
-      alert('Hubo un error al procesar el pago. Inténtalo nuevamente.')
+      console.error('Error al procesar el pago:', error);
+      alert('Hubo un error al procesar el pago. Inténtalo nuevamente.');
     } else {
       // Pago exitoso
-      alert('Pago exitoso, ¡Gracias por tu compra!')
+      alert('Pago exitoso, ¡Gracias por tu compra!');
     }
   } catch (error) {
-    console.error('Error al crear el Payment Intent:', error)
-    alert("Hubo un error en el proceso de pago. Intenta más tarde.")
+    console.error('Error al crear el Payment Intent:', error);
+    //alert("Hubo un error en el proceso de pago. Intenta más tarde...");
   }
 }
 </script>

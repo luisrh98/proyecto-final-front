@@ -280,6 +280,7 @@ const enviarSolicitudGestor = async () => {
 };
 
 onMounted(() => {
+  
   if (import.meta.client) {
     authStore.cargarTokensDesdeSession()
 
