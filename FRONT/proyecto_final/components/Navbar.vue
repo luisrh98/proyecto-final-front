@@ -5,16 +5,22 @@
       <NuxtLink to="/" class="text-2xl font-bold tracking-wider hover:text-indigo-100 transition duration-300">
         Inicio
       </NuxtLink>
-      
-      <!-- Contenedor de acciones -->
-      <div class="flex gap-4 items-center space-x-6">
+
+      <!-- Botón menú móvil -->
+      <button @click="menuOpen = !menuOpen" class="lg:hidden focus:outline-none">
+        <Icon :name="menuOpen ? 'mdi:close' : 'mdi:menu'" class="text-3xl" />
+      </button>
+
+      <!-- Contenedor de enlaces (desktop + móvil) -->
+      <div :class="['flex-col lg:flex-row lg:items-center', menuOpen ? 'flex' : 'hidden', 'lg:flex gap-4 mt-4 lg:mt-0 w-full lg:w-auto']">
         <!-- Menú Categorías -->
-        <div class="relative">
-          <button class="nav-btn bg-indigo-700 hover:bg-indigo-800 px-4 py-2 rounded-full text-white flex items-center gap-2 focus:outline-none">
+        <div class="relative group">
+          <button class="nav-btn bg-indigo-700 hover:bg-indigo-800 px-4 py-2 rounded-full flex items-center gap-2">
             Categorías
             <Icon name="mdi:menu-down" class="text-xl" />
           </button>
-          <div class="dropdown-menu absolute hidden bg-white text-gray-800 rounded-lg shadow-lg mt-2 w-48 z-10">
+          <!-- Dropdown visible en hover (desktop) o cuando se toca (móvil) -->
+          <div class="dropdown-menu absolute bg-white text-gray-800 rounded-lg shadow-lg mt-2 w-48 z-10 hidden group-hover:block lg:group-hover:block lg:absolute">
             <div class="py-2">
               <NuxtLink 
                 :to="{ path: '/' }" 
@@ -33,8 +39,8 @@
             </div>
           </div>
         </div>
-        
-        <!-- Botones de navegación -->
+
+        <!-- Enlaces de navegación -->
         <NuxtLink 
           to="/panel_administrador" 
           class="nav-btn bg-purple-700 hover:bg-purple-800 text-white rounded-full py-2 px-4 flex items-center gap-2 transition duration-300"
@@ -42,7 +48,7 @@
           <Icon name="mdi:account-circle" class="text-xl" />
           Panel administrador
         </NuxtLink>
-        
+
         <NuxtLink 
           to="/gestor/gestion_pedidos" 
           class="nav-btn bg-purple-700 hover:bg-purple-800 text-white rounded-full py-2 px-4 flex items-center gap-2 transition duration-300"
@@ -76,11 +82,12 @@ import { ref, onMounted } from 'vue';
 const { $axios } = useNuxtApp();
 
 const categorias = ref([]);
+const menuOpen = ref(false);
 
 const fetchCategorias = async () => {
   try {
     const { data } = await $axios.get('/products/categorias/');
-    categorias.value = data.slice(0, 10);  // Limitar a las primeras 10 categorías
+    categorias.value = data.slice(0, 10);
   } catch (error) {
     console.error("Error fetching categorias:", error);
   }
@@ -90,15 +97,6 @@ onMounted(fetchCategorias);
 </script>
 
 <style scoped>
-/* Estilos para el dropdown */
-.nav-btn:hover + .dropdown-menu, .dropdown-menu:hover {
-  display: block;
-}
-.dropdown-menu {
-  display: none;
-}
-
-/* Estilo general para los items de menú */
 .menu-item {
   font-size: 1rem;
   padding: 0.5rem 1rem;
@@ -106,7 +104,7 @@ onMounted(fetchCategorias);
   text-decoration: none;
 }
 .menu-item:hover {
-  background-color: #5B21B6; /* Fondo hover */
+  background-color: #5B21B6;
   color: white;
 }
 </style>
