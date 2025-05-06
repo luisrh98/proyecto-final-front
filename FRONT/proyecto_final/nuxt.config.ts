@@ -11,6 +11,7 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2025-04-01',
   plugins: ['~/plugins/pinia.js'],
-  modules: ['@nuxtjs/tailwindcss'],
+  modules: ['@nuxtjs/tailwindcss', '@nuxt/icon'],
+            
   
 });

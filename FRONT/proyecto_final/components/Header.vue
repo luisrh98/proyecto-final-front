@@ -16,24 +16,22 @@
         {{ user ? 'Cerrar Sesión' : 'Iniciar Sesión' }}
       </button>
     </div>
-    
+
   </header>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { onMounted } from 'vue';
 import { navigateTo } from '#app';
 import { useAuthStore } from '@/stores/auth';
+import { storeToRefs } from 'pinia';
 
 const authStore = useAuthStore();
-const user = ref(null);
+const { user } = storeToRefs(authStore);
 
 onMounted(() => {
   if (import.meta.client) {
     authStore.cargarTokensDesdeSession();
-    if (authStore.isLoggedIn) {
-      user.value = authStore.user;
-    }
   }
 });
 

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@mdi/js": "^7.4.47",
+    "@nuxt/icon": "^1.12.0",
     "@pinia/nuxt": "^0.10.1",
     "@stripe/stripe-js": "^7.0.0",
     "axios": "^1.8.1",

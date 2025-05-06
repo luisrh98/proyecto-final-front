@@ -73,17 +73,17 @@
 import ProductoList from '../components/producto/ProductoList.vue';
 import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { jwtDecode } from 'jwt-decode';
-import { navigateTo, useNuxtApp } from '#app';
+import { useAuthStore } from '~/stores/auth';  // Importa la tienda de autenticación
 
 // Variables reactivas
-const user = ref(null);
 const productos = ref([]);
 const page = ref(1);
 const itemsPerPage = 6;
-
 const { $axios } = useNuxtApp();
 const route = useRoute();
+
+// Usa la tienda de autenticación
+const authStore = useAuthStore();
 
 // Función para obtener productos
 const fetchProductos = async () => {
@@ -104,32 +104,25 @@ const fetchProductos = async () => {
   }
 };
 
-// Verificar sesión del usuario
-if (import.meta.client) {
-  onMounted(() => {
-    const authToken = sessionStorage.getItem('authToken');
-    if (authToken) {
-      try {
-        const decodedToken = jwtDecode(authToken);
-        if (decodedToken.exp * 1000 < Date.now()) {
-          sessionStorage.removeItem('authToken');
-          navigateTo('/login');
-        }
-      } catch {
-        sessionStorage.removeItem('authToken');
-        navigateTo('/login');
-      }
-    }
-    const authUser = sessionStorage.getItem('authUser');
-    if (authUser) {
-      user.value = authUser;
-    }
-  });
-}
-
-// Obtener productos al montar
+// Verificar sesión del usuario usando authStore
 onMounted(() => {
+  authStore.cargarTokensDesdeSession();  // Cargar los datos desde sessionStorage
   fetchProductos();
+  if (import.meta.client) {
+    window.Tawk_API = window.Tawk_API || {};
+    window.Tawk_LoadStart = new Date();
+
+    const s1 = document.createElement("script");
+    s1.async = true;
+    s1.src = "https://embed.tawk.to/6819bfae5510d619105dd3bd/1iqi99gjf";
+    s1.charset = "UTF-8";
+    s1.setAttribute("crossorigin", "*");
+
+    const s0 = document.getElementsByTagName("script")[0];
+    if (s0?.parentNode) {
+      s0.parentNode.insertBefore(s1, s0);
+    }
+  }
 });
 
 // Observar cambios en la categoría
@@ -187,8 +180,8 @@ const logout = () => {
   if (import.meta.client) {
     sessionStorage.removeItem('authToken');
     sessionStorage.removeItem('authUser');
+    authStore.logout(); // Llama al método de logout en el authStore para manejar el estado
     navigateTo('/login');
   }
 };
 </script>
-
