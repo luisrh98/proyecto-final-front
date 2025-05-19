@@ -1,73 +1,94 @@
 <template>
-    <div class="pedidos-container">
-      <!-- Cabecera -->
-      <Header />
-      <!-- Barra de navegación -->
-      <Navbar />
-  
-      <!-- Contenido principal -->
-      <div class="content-wrapper">
-        <h1 class="page-title">Mis Pedidos</h1>
-        <div v-if="pedidos.length > 0">
-          <div v-for="pedido in pedidos" :key="pedido.id" class="pedido-card">
-            <h2>Pedido #{{ pedido.id }}</h2>
-            <p><strong>Fecha:</strong> {{ formatDate(pedido.fecha_creacion) }}</p>
-            <p><strong>Estado:</strong> {{ pedido.estado }}</p>
-            <p><strong>Total:</strong> €{{ pedido.total }}</p>
-            <div class="pedido-direccion">
-              <h3>Dirección de Envío</h3>
-              <p v-if="pedido">
-                {{ pedido.calle }}, 
-                {{ pedido.ciudad }}, 
-                {{ pedido.codigo_postal }}, 
-                {{ pedido.pais }}
-              </p>
-              <p v-else>Sin dirección asignada</p>
-            </div>
-            <div class="pedido-items">
-              <h3>Productos</h3>
-              <ul>
-                <li v-for="item in pedido.items" :key="item.id">
-                  {{ item.cantidad }} x {{ item.producto }} - €{{ item.precio_unitario }}
-                </li>
-              </ul>
-            </div>
+  <div class="min-h-screen bg-gradient-to-br from-gray-100 via-white to-blue-100 text-gray-800">
+    <!-- Cabecera -->
+    <Header />
+    <!-- Barra de navegación -->
+    <Navbar />
+
+    <!-- Contenido principal -->
+    <div class="max-w-5xl mx-auto py-12 px-6">
+      <h1 class="text-3xl font-bold text-center text-indigo-700 mb-10">Mis Pedidos</h1>
+
+      <div v-if="pedidos.length > 0" class="space-y-8">
+        <div
+          v-for="pedido in pedidos"
+          :key="pedido.id"
+          class="bg-white border border-gray-200 shadow-md rounded-xl p-6 transition hover:shadow-lg"
+        >
+          <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4">
+            <h2 class="text-xl font-semibold text-indigo-600">Pedido #{{ pedido.id }}</h2>
+            <span class="text-sm text-gray-500">{{ formatDate(pedido.fecha_creacion) }}</span>
+          </div>
+
+          <p class="mb-2"><strong>Estado:</strong> {{ pedido.estado }}</p>
+          <p class="mb-4"><strong>Total:</strong> €{{ pedido.total }}</p>
+
+          <div class="mb-4">
+            <h3 class="font-medium text-gray-700 mb-1">Dirección de Envío</h3>
+            <p class="text-sm text-gray-600" v-if="pedido">
+              {{ pedido.calle }},
+              {{ pedido.ciudad }},
+              {{ pedido.codigo_postal }},
+              {{ pedido.pais }}
+            </p>
+            <p v-else class="text-sm text-red-500">Sin dirección asignada</p>
+          </div>
+
+          <div>
+            <h3 class="font-medium text-gray-700 mb-2">Productos</h3>
+            <ul class="space-y-1 text-sm text-gray-700 list-disc pl-5">
+              <li v-for="item in pedido.items" :key="item.id">
+                {{ item.cantidad }} x {{ item.producto }} - €{{ item.precio_unitario }}
+              </li>
+            </ul>
+          </div>
+
+          <!-- Botón para generar el PDF -->
+          <div>
+            <button 
+              @click="generarPdf(pedido.id)"
+              class="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Descargar PDF
+            </button>
           </div>
         </div>
-        <div v-else>
-          <p>No tienes pedidos registrados.</p>
-        </div>
       </div>
-  
-      <!-- Footer -->
-      <Footer />
+
+      <div v-else class="text-center text-gray-600 mt-20">
+        <p>No tienes pedidos registrados.</p>
+      </div>
     </div>
-  </template>
-  
-  <script setup>
-  import { ref, onMounted } from 'vue'
-  import { useRouter } from 'vue-router'
-  import { useAuthStore } from '@/stores/auth'
-  const { $axios } = useNuxtApp()
-  
-  import Header from '~/components/Header.vue'
-  import Navbar from '~/components/Navbar.vue'
-  import Footer from '~/components/Footer.vue'
-  
-  // Store de autenticación
-  const authStore = useAuthStore()
-  const router = useRouter()
-  
-  // Variable reactiva para almacenar los pedidos
-  const pedidos = ref([])
-  
-  // Función para formatear las fechas (puedes ajustarla a tu formato deseado)
-  const formatDate = (fecha) => {
-    return new Date(fecha).toLocaleDateString()
-  }
-  
-  // Función para obtener los pedidos del usuario
-  const fetchPedidos = async () => {
+
+    <!-- Footer -->
+    <Footer />
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+const { $axios } = useNuxtApp()
+
+import Header from '~/components/Header.vue'
+import Navbar from '~/components/Navbar.vue'
+import Footer from '~/components/Footer.vue'
+
+// Store de autenticación
+const authStore = useAuthStore()
+const router = useRouter()
+
+// Variable reactiva para almacenar los pedidos
+const pedidos = ref([])
+
+// Función para formatear las fechas (puedes ajustarla a tu formato deseado)
+const formatDate = (fecha) => {
+  return new Date(fecha).toLocaleDateString()
+}
+
+// Función para obtener los pedidos del usuario
+const fetchPedidos = async () => {
   try {
     const token = authStore.authToken;
     if (!token) throw new Error('No hay token disponible');
@@ -90,75 +111,41 @@
     router.push('/login'); // Redirige a login si falla la autenticación
   }
 };
-  
-  onMounted(() => {
-    // Cargar los tokens y verificar que el usuario esté autenticado
-    authStore.cargarTokensDesdeSession()
-    if (!authStore.isLoggedIn) {
-      router.push('/login')
-      return
-    }
-    fetchPedidos()
-  })
-  </script>
-  
-  <style scoped lang="scss">
-  @import '../assets/scss/_variables.scss';
-  @import '../assets/scss/global.scss';
-  
-  .pedidos-container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+
+// Función para generar y descargar el PDF sin abandonar la página
+const generarPdf = async (pedidoId) => {
+  try {
+    const token = authStore.authToken;
+    if (!token) throw new Error('No hay token disponible');
+
+    // Hacer la llamada al backend para obtener el PDF
+    const { data } = await $axios.get(`/orders/pedido/pdf/${pedidoId}/`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/pdf',
+      },
+      responseType: 'blob', // importante para obtener el archivo como un blob
+    });
+
+    // Crear un enlace para descargar el archivo PDF
+    const url = window.URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `pedido_${pedidoId}.pdf`;  // Nombre del archivo PDF
+    link.click();  // Simula el click para descargar el archivo
+  } catch (error) {
+    console.error('Error al generar el PDF:', error);
+    // Maneja el error según sea necesario
   }
-  
-  .content-wrapper {
-    width: 100%;
-    max-width: 1200px;
-    margin-top: 40px;
-    padding: 20px;
+};
+
+onMounted(() => {
+  // Cargar los tokens y verificar que el usuario esté autenticado
+  authStore.cargarTokensDesdeSession()
+  if (!authStore.isLoggedIn) {
+    router.push('/login')
+    return
   }
-  
-  .page-title {
-    font-size: 2rem;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 20px;
-  }
-  
-  .pedido-card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  }
-  
-  .pedido-card h2 {
-    margin-bottom: 10px;
-  }
-  
-  .pedido-direccion {
-    margin-top: 10px;
-  }
-  
-  .pedido-items {
-    margin-top: 10px;
-  }
-  
-  .pedido-items ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .pedido-items li {
-    padding: 5px 0;
-    border-bottom: 1px solid #eee;
-  }
-  
-  .pedido-items li:last-child {
-    border-bottom: none;
-  }
-  </style>
-  
+  fetchPedidos()
+})
+</script>

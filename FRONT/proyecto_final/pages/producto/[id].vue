@@ -1,83 +1,129 @@
 <template>
   <div class="page-container">
+    <!-- Cabecera -->
     <Header />
-    <Navbar />
 
-    <!-- Agregamos el enlace al carrito con la cantidad de productos -->
-    <div class="cart-link-wrapper">
-      <NuxtLink to="/carrito" class="btn btn-cart">
-        <!-- Puedes usar un ícono aquí en lugar de texto -->
-        Carrito ({{ cartStore.totalItems }})
-      </NuxtLink>
+    <!-- Barra de navegación -->
+    <div class="nav-bar">
+      <Navbar />
     </div>
 
-    <div v-if="producto" class="product-detail-page">
-      <!-- Sección Principal -->
-      <div class="product-main">
-        <div class="image-container">
-          <img :src="producto.imagen" :alt="producto.titulo" class="main-image" />
+    <!-- Contenido principal -->
+    <div class="content-wrapper py-12 px-6 flex justify-center">
+      <div v-if="producto" class="w-full max-w-6xl bg-white shadow-lg rounded-lg p-8">
+        <!-- Botón de carrito centrado arriba del producto -->
+        <div class="flex justify-center mb-10">
+          <NuxtLink
+            to="/carrito"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full shadow-lg hover:scale-105 transition-transform duration-300"
+          >
+            Carrito ({{ cartStore.totalItems }})
+          </NuxtLink>
         </div>
-        <div class="product-info">
-          <h1 class="title">{{ producto.titulo }}</h1>
-          <p class="price">{{ producto.precio }}€</p>
-          <p>{{ producto.descripcion }}</p>
 
-          <!-- Detalles Adicionales -->
-          <div class="details">
-            <p><strong>Categoría:</strong> {{ producto.categoria.nombre }}</p>
-            <p><strong>Descripción de la categoría:</strong> {{ producto.categoria.descripcion }}</p>
-            <p><strong>Vendedor:</strong> {{ producto.vendedor.nombre }} ({{ producto.vendedor.email }})</p>
-            <p><strong>Creado:</strong> {{ formatDate(producto.creado_en) }}</p>
-          </div>
-
-          <!-- Formulario Carrito -->
-          <form @submit.prevent="addToCart" class="cart-form">
-            <input type="number" v-model="cantidad" min="1" class="quantity-input" />
-            <!-- Usamos la misma clase 'btn' y 'btn-accent' para mantener el mismo estilo -->
-            <button type="submit" class="btn btn-accent">Añadir al Carrito</button>
-          </form>
-        </div>
-      </div>
-
-      <!-- Reseñas -->
-      <div class="reviews-section">
-        <h2>Reseñas</h2>
-        <div v-if="producto.reseñas && producto.reseñas.length">
-          <div v-for="reseña in producto.reseñas" :key="reseña.id" class="review">
-            <p><strong>{{ reseña.usuario }}</strong> - {{ reseña.rating }}/5</p>
-            <p>{{ reseña.comentario }}</p>
-            <p><small>{{ formatDate(reseña.creado_en) }}</small></p>
-          </div>
-        </div>
-        <div v-else>
-          <p>No hay reseñas aún.</p>
-        </div>
-      </div>
-
-      <!-- Formulario para dejar una reseña -->
-      <div class="reviews-form">
-        <h3>Deja tu reseña</h3>
-        <div v-if="isLoggedIn">
-          <form @submit.prevent="enviarReseña">
-            <label for="calificacion">Calificación (1-5):</label>
-            <input
-              type="number"
-              id="calificacion"
-              v-model.number="nuevaReseña.rating"
-              min="1"
-              max="5"
-              required
+        <!-- Detalles del producto -->
+        <div class="flex flex-col md:flex-row gap-8 mb-12">
+          <div class="flex justify-center md:flex-1">
+            <img
+              :src="producto.imagen"
+              :alt="producto.titulo"
+              class="rounded-lg shadow-lg max-w-full h-auto object-contain"
             />
+          </div>
+          <div class="flex flex-col flex-1">
+            <h1 class="text-3xl font-bold mb-4">{{ producto.titulo }}</h1>
+            <p class="text-2xl text-green-500 mb-4">{{ producto.precio }}€</p>
+            <p class="mb-4">{{ producto.descripcion }}</p>
 
-            <label for="comentario">Comentario:</label>
-            <textarea id="comentario" v-model="nuevaReseña.comentario" required></textarea>
+            <div class="space-y-2 mb-6 text-sm text-gray-700">
+              <p><strong>Categoría:</strong> {{ producto.categoria }}</p>
+              <p><strong>Descripción de la categoría:</strong> {{ producto.categoria }}</p>
+              <p><strong>Vendedor:</strong> {{ producto.vendedor.nombre }} ({{ producto.vendedor.email }})</p>
+              <p><strong>Creado:</strong> {{ formatDate(producto.creado_en) }}</p>
+            </div>
 
-            <button type="submit" class="btn btn-accent">Enviar Reseña</button>
-          </form>
+            <!-- Formulario añadir al carrito -->
+            <form @submit.prevent="addToCart" class="flex items-center gap-4">
+              <input
+                type="number"
+                v-model="cantidad"
+                min="1"
+                class="w-20 py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+              <button
+                type="submit"
+                class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition"
+              >
+                Añadir al Carrito
+              </button>
+            </form>
+          </div>
         </div>
-        <div v-else>
-          <p>Debes iniciar sesión para dejar una reseña.</p>
-          <button class="btn btn-secondary" @click="navigateTo('/login')">Iniciar Sesión</button>
+
+        <!-- Reseñas -->
+        <div class="mt-12">
+          <h2 class="text-2xl font-semibold mb-6">Reseñas</h2>
+          <div v-if="producto.reseñas && producto.reseñas.length">
+            <div
+              v-for="reseña in producto.reseñas"
+              :key="reseña.id"
+              class="mb-6 p-6 bg-white shadow-md rounded-lg"
+            >
+              <p class="font-semibold">{{ reseña.usuario }} - {{ reseña.rating }}/5</p>
+              <p class="my-2">{{ reseña.comentario }}</p>
+              <p class="text-sm text-gray-500">{{ formatDate(reseña.creado_en) }}</p>
+            </div>
+          </div>
+          <div v-else>
+            <p class="text-gray-500">No hay reseñas aún.</p>
+          </div>
+        </div>
+
+        <!-- Formulario reseña -->
+        <div class="mt-12 p-6 bg-gray-100 rounded-lg shadow-md">
+          <h3 class="text-xl font-semibold mb-4">Deja tu reseña</h3>
+          <div v-if="isLoggedIn">
+            <form @submit.prevent="enviarReseña" class="space-y-4">
+              <div>
+                <label for="calificacion" class="block mb-1 font-medium">Calificación (1-5):</label>
+                <input
+                  id="calificacion"
+                  type="number"
+                  v-model.number="nuevaReseña.rating"
+                  min="1"
+                  max="5"
+                  required
+                  class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div>
+                <label for="comentario" class="block mb-1 font-medium">Comentario:</label>
+                <textarea
+                  id="comentario"
+                  v-model="nuevaReseña.comentario"
+                  required
+                  class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition"
+              >
+                Enviar Reseña
+              </button>
+            </form>
+          </div>
+          <div v-else class="text-center">
+            <p>Debes iniciar sesión para dejar una reseña.</p>
+            <button
+              class="mt-4 bg-gray-300 text-gray-800 px-6 py-2 rounded-lg hover:bg-gray-400 transition"
+              @click="navigateTo('/login')"
+            >
+              Iniciar Sesión
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -91,13 +137,13 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { navigateTo } from '#app'
 import { useAuthStore } from '@/stores/auth'
-import { useCartStore } from '@/stores/cart' // Importa el store del carrito
+import { useCartStore } from '@/stores/cart'
 import { useNuxtApp } from '#app'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
-const cartStore = useCartStore() // Obtén el store del carrito
+const cartStore = useCartStore()
 const { $axios } = useNuxtApp()
 
 const producto = ref(null)
@@ -108,7 +154,6 @@ const nuevaReseña = ref({
   comentario: ''
 })
 
-// Obtenemos el estado de autenticación a partir del store
 const isLoggedIn = authStore.isLoggedIn
 
 const formatDate = (dateString) => {
@@ -126,19 +171,14 @@ const fetchProducto = async () => {
 
 const enviarReseña = async () => {
   try {
-    // Si no está logeado, redirige a login
     if (!isLoggedIn) {
       router.push('/login')
       return
     }
 
-    // Agrega el id del producto a la reseña a enviar
     nuevaReseña.value.producto = producto.value.id
-
     await $axios.post(`/products/reseñas/`, nuevaReseña.value)
     await fetchProducto()
-
-    // Reinicia el formulario
     nuevaReseña.value.rating = 5
     nuevaReseña.value.comentario = ''
   } catch (error) {
@@ -147,18 +187,15 @@ const enviarReseña = async () => {
 }
 
 const addToCart = () => {
-  // Lógica para añadir al carrito
   const productoSeleccionado = producto.value
   const cantidadSeleccionada = cantidad.value
-  cartStore.addItem(productoSeleccionado, cantidadSeleccionada) // Usar la lógica para añadir productos
+  cartStore.addItem(productoSeleccionado, cantidadSeleccionada)
   console.log(`Añadir ${cantidadSeleccionada} del producto ${productoSeleccionado.id} al carrito`)
 }
 
 onMounted(() => {
-  // Carga los tokens y datos de usuario desde sessionStorage
   authStore.cargarTokensDesdeSession()
 
-  // Si hay token, asegúrate de asignarlo al axios client
   if (authStore.authToken) {
     $axios.defaults.headers.common['Authorization'] = `Bearer ${authStore.authToken}`
   }
@@ -166,134 +203,3 @@ onMounted(() => {
   fetchProducto()
 })
 </script>
-
-<style scoped lang="scss">
-@import '../../assets/scss/_variables.scss';
-@import '../../assets/scss/global.scss';
-
-.product-detail-page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-
-  .product-main {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    margin-bottom: 3rem;
-
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .title {
-    color: $dark;
-    text-decoration: underline;
-    text-align: center;
-  }
-
-  .main-image {
-    width: 100%;
-    height: 500px;
-    object-fit: cover;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-
-  .price {
-    color: #e67e22;
-    font-size: 2rem;
-    margin: 1rem 0;
-    text-align: center;
-  }
-
-  .details {
-    margin: 2rem 0;
-    padding: 1.5rem;
-    background: rgba($secondary, 0.1);
-    border-radius: 8px;
-    line-height: 1.6;
-
-    p {
-      margin: 0.5rem 0;
-      color: $dark;
-    }
-  }
-
-  .cart-form {
-    display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-
-  .quantity-input {
-    width: 80px;
-    padding: 0.5rem;
-    border: 1px solid $secondary;
-    border-radius: 8px;
-  }
-
-  .reviews-section {
-    margin-top: 4rem;
-    padding: 2rem;
-    background: $white;
-    border-radius: 12px;
-    box-shadow: $box-shadow;
-
-    .review {
-      border-bottom: 1px solid $secondary;
-      padding: 1.5rem 0;
-
-      &:last-child {
-        border-bottom: none;
-      }
-    }
-  }
-
-  .reviews-form {
-    margin-top: 2rem;
-    padding: 2rem;
-    background: #f9f9f9;
-    border-radius: 8px;
-
-    label {
-      display: block;
-      margin-top: 1rem;
-      font-weight: bold;
-    }
-
-    input,
-    textarea {
-      width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.5rem;
-      border-radius: 6px;
-      border: 1px solid $secondary;
-    }
-
-    button {
-      margin-top: 1rem;
-    }
-  }
-
-  .cart-link-wrapper {
-    width: 100%;
-    text-align: right;
-    padding: 1rem;
-    
-    .btn-cart {
-      background: $secondary;
-      color: $white;
-      padding: 10px 20px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: bold;
-      
-      &:hover {
-        background: lighten($secondary, 10%);
-      }
-    }
-  }
-}
-</style>
