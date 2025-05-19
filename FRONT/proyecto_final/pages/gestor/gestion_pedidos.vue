@@ -176,14 +176,46 @@ const crearProducto = async () => {
   formData.append('imagen', nuevoProducto.value.imagen);
 
   try {
-    await $axios.post('/products/productos/', formData);
+    // Configuración específica para subida de archivos
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${authStore.authToken}`
+      }
+    };
+
+    // Verificar el objeto FormData (para depuración)
+    console.log('Enviando FormData:', {
+      titulo: nuevoProducto.value.titulo,
+      descripcion: nuevoProducto.value.descripcion,
+      precio: nuevoProducto.value.precio,
+      categoria: nuevoProducto.value.categoria,
+      imagen: nuevoProducto.value.imagen ? nuevoProducto.value.imagen.name : 'No hay imagen'
+    });
+
+    // Usar la configuración específica para la subida
+    await $axios.post('/products/productos/', formData, config);
 
     await fetchMisProductos();
     resetForm();
     alert('Producto creado exitosamente.');
   } catch (error) {
+    // Mejorar el manejo de errores para depurar problemas de subida
     console.error('Error al crear el producto:', error);
-    alert('No se pudo crear el producto. Por favor, intenta más tarde.');
+    
+    if (error.response) {
+      // El servidor respondió con un código de estado diferente de 2xx
+      console.error('Respuesta del servidor:', error.response.data);
+      console.error('Estado HTTP:', error.response.status);
+      alert(`Error ${error.response.status}: ${JSON.stringify(error.response.data)}`);
+    } else if (error.request) {
+      // La solicitud se realizó pero no se recibió respuesta
+      console.error('No se recibió respuesta del servidor');
+      alert('No se recibió respuesta del servidor. Verifica tu conexión.');
+    } else {
+      // Algo falló en la configuración de la solicitud
+      alert('Error al crear el producto: ' + error.message);
+    }
   }
 };
 

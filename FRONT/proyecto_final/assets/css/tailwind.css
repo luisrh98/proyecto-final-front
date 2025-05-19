@@ -1,3 +1,12 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Puedes añadir tus propias clases personalizadas aquí */
+@layer components {
+  /* Ejemplo de clase personalizada */
+  .btn-primary {
+    @apply py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-700;
+  }
+}
