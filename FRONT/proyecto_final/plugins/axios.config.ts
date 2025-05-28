@@ -10,7 +10,7 @@ const processQueue = (error?: any) => {
 
 export default defineNuxtPlugin(() => {
   const apiClient = axios.create({
-    baseURL: useRuntimeConfig().public.API_BASE_URL,  // e.g. "https://mi-backend.com/api/accounts"
+    baseURL: useRuntimeConfig().public.API_BASE_URL,  
     headers: { 'Content-Type': 'application/json' },
   });
 
@@ -54,8 +54,8 @@ export default defineNuxtPlugin(() => {
 
               const { data } = await apiClient.post(
                 '/accounts/refresh/',               // coincide con path('refresh/', ...) en accounts/urls.py
-                { refresh: refreshToken },
-                { headers: { Origin: window.location.origin } }
+                { refresh: refreshToken }
+                
               );
 
               // Guardamos y aplicamos los nuevos tokens

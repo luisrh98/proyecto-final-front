@@ -10,7 +10,8 @@
             <p>
                 <strong>Usuario:</strong> {{ solicitud.usuario.username }}<br>
                 <strong>Email:</strong> {{ solicitud.usuario.email }}<br>
-                <strong>Tienda:</strong> {{ solicitud.nombre_tienda }}
+                <strong>Tienda:</strong> {{ solicitud.nombre_tienda }}<br>
+                <strong>Identificación fiscal:</strong> {{ solicitud.identificacion_fiscal }}
             </p>
           <div class="buttons mt-4 space-x-4">
             <button @click="aprobar(solicitud.id)" class="btn btn-success py-2 px-6 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-200">Aprobar</button>

@@ -60,11 +60,12 @@
         </NuxtLink>
 
         <NuxtLink
+          v-if="authStore.user && authStore.user.tipo !== 'cliente'"
           to="/gestor/gestion_pedidos"
           class="nav-btn bg-purple-700 hover:bg-purple-800 text-white rounded-full py-2 px-4 flex items-center gap-2"
         >
           <Icon name="mdi:account-circle" class="text-xl" />
-          Gestionar productos
+          Panel de vendedor
         </NuxtLink>
         <NuxtLink
           to="/perfil"

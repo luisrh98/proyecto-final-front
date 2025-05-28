@@ -76,10 +76,7 @@ import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useNuxtApp } from '#app';
 import { useAuthStore } from '~/stores/auth';
-import Header from '~/components/Header.vue';
-import Navbar from '~/components/Navbar.vue';
-import Footer from '~/components/Footer.vue';
-import ProductoList from '~/components/producto/ProductoList.vue';
+
 
 const { $axios } = useNuxtApp();
 const route = useRoute();

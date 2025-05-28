@@ -1,17 +1,12 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-gray-100 via-white to-blue-50">
-    <!-- Cabecera -->
     <Header />
-    <!-- Barra de navegación -->
     <Navbar />
 
-    <!-- Contenido principal -->
     <div class="max-w-2xl mx-auto py-12 px-6">
       <h1 class="text-3xl font-bold text-center text-indigo-700 mb-10">Perfil de Usuario</h1>
 
-      <!-- Formulario de perfil -->
       <form @submit.prevent="saveProfile" v-if="usuario" class="space-y-6 bg-white p-8 rounded-lg shadow-lg">
-        <!-- Datos de Usuario -->
         <div class="form-group">
           <label for="username" class="block text-lg font-medium text-gray-700">Usuario</label>
           <input
@@ -29,6 +24,9 @@
             id="first_name"
             v-model="usuario.first_name"
             type="text"
+            required
+            minlength="2"
+            maxlength="50"
             class="w-full p-3 border border-gray-300 rounded-lg"
           />
         </div>
@@ -39,6 +37,9 @@
             id="last_name"
             v-model="usuario.last_name"
             type="text"
+            required
+            minlength="2"
+            maxlength="80"
             class="w-full p-3 border border-gray-300 rounded-lg"
           />
         </div>
@@ -59,12 +60,13 @@
           <input
             id="telefono"
             v-model="usuario.telefono"
-            type="text"
+            type="tel"
+            pattern="\d{9,15}"
+            title="Introduce un número de teléfono válido (entre 9 y 15 dígitos)"
             class="w-full p-3 border border-gray-300 rounded-lg"
           />
         </div>
 
-        <!-- Dirección -->
         <div class="address-section mt-8">
           <h3 class="text-xl font-semibold text-gray-800">Dirección</h3>
 
@@ -76,6 +78,8 @@
                 v-model="usuario.direccion.calle"
                 type="text"
                 required
+                minlength="3"
+                maxlength="100"
                 class="w-full p-3 border border-gray-300 rounded-lg"
               />
             </div>
@@ -87,6 +91,8 @@
                 v-model="usuario.direccion.ciudad"
                 type="text"
                 required
+                minlength="2"
+                maxlength="60"
                 class="w-full p-3 border border-gray-300 rounded-lg"
               />
             </div>
@@ -98,6 +104,8 @@
                 v-model="usuario.direccion.codigo_postal"
                 type="text"
                 required
+                pattern="\d{4,10}"
+                title="Introduce un código postal válido"
                 class="w-full p-3 border border-gray-300 rounded-lg"
               />
             </div>
@@ -109,6 +117,8 @@
                 v-model="usuario.direccion.pais"
                 type="text"
                 required
+                minlength="2"
+                maxlength="50"
                 class="w-full p-3 border border-gray-300 rounded-lg"
               />
             </div>
@@ -123,9 +133,9 @@
           </div>
         </div>
 
-        <!-- Solicitar ser gestor -->
         <div v-if="usuario.tipo === 'cliente' && !usuario.solicitud_gestor" class="mt-8">
           <h3 class="text-xl font-semibold text-gray-800">Solicitar ser Gestor</h3>
+
           <div class="form-group">
             <label for="nombre_tienda" class="block text-lg font-medium text-gray-700">Nombre de la Tienda</label>
             <input
@@ -133,6 +143,8 @@
               v-model="datosGestor.nombre_tienda"
               type="text"
               required
+              minlength="3"
+              maxlength="100"
               class="w-full p-3 border border-gray-300 rounded-lg"
             />
           </div>
@@ -144,6 +156,8 @@
               v-model="datosGestor.identificacion_fiscal"
               type="text"
               required
+              minlength="5"
+              maxlength="20"
               class="w-full p-3 border border-gray-300 rounded-lg"
             />
           </div>
@@ -157,12 +171,10 @@
           </button>
         </div>
 
-        <!-- Estado solicitud gestor -->
         <div v-if="usuario.solicitud_gestor" class="mt-8 text-center">
           <p class="text-lg text-gray-600">Tu solicitud para ser gestor está pendiente de aprobación.</p>
         </div>
 
-        <!-- Botón de guardar cambios -->
         <div class="action-buttons mt-10 text-center">
           <button type="submit" class="w-full py-3 px-6 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition">
             Guardar Cambios
@@ -171,7 +183,6 @@
       </form>
     </div>
 
-    <!-- Footer -->
     <Footer />
   </div>
 </template>
