@@ -32,7 +32,7 @@ import { onMounted } from 'vue';
 import { navigateTo } from '#app';
 import { useAuthStore } from '@/stores/auth';
 import { storeToRefs } from 'pinia';
-import Notificaciones from '@/components/Notificaciones/Notificaciones.vue'
+import Notificaciones from '@/components/notificaciones/Notificaciones.vue'
 
 const authStore = useAuthStore();
 const { user } = storeToRefs(authStore);
