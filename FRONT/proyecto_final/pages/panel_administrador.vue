@@ -2,53 +2,83 @@
   <Header />
   <Navbar />
 
-  <div class="admin-dashboard flex">
-    <!-- Menú Lateral -->
-    <aside class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg sidebar w-64 p-6">
-      <h2 class="text-2xl font-semibold mb-8">Panel de Administrador</h2>
-      <ul class="space-y-4">
-        <li>
-          <button
-            @click="seleccionarVista('solicitudes')"
-            :class="['w-full text-left text-lg px-4 py-2 rounded-md transition', vistaSeleccionada === 'solicitudes' ? 'bg-indigo-700 text-indigo-200' : 'hover:bg-indigo-700 hover:text-indigo-300']"
-          >
-            Solicitudes de Gestor
-          </button>
-        </li>
-        <li>
-          <a href="https://proyecto-final.duckdns.org/admin/accounts/usuario/" class="text-lg block px-4 py-2 hover:text-indigo-300 hover:bg-indigo-700 rounded-md">Gestión de Usuarios</a>
-        </li>
-        <li>
-          <button
-            @click="seleccionarVista('estadisticas')"
-            :class="['w-full text-left text-lg px-4 py-2 rounded-md transition', vistaSeleccionada === 'estadisticas' ? 'bg-indigo-700 text-indigo-200' : 'hover:bg-indigo-700 hover:text-indigo-300']"
-          >
-            Estadísticas
-          </button>
-        </li>
-        <li>
-          <a href="https://proyecto-final.duckdns.org/admin/products/producto/" class="text-lg block px-4 py-2 hover:text-indigo-300 hover:bg-indigo-700 rounded-md">Gestión de Productos</a>
-        </li>
-        <li>
-          <a href="https://proyecto-final.duckdns.org/admin/orders/pedido/" class="text-lg block px-4 py-2 hover:text-indigo-300 hover:bg-indigo-700 rounded-md">Gestión de Pedidos</a>
-        </li>
-        <li>
-          <a href="https://proyecto-final.duckdns.org/admin/products/categoria/" class="text-lg block px-4 py-2 hover:text-indigo-300 hover:bg-indigo-700 rounded-md">Gestión de Categorías</a>
-        </li>
-        <li>
-          <a href="https://proyecto-final.duckdns.org/admin/orders/pago/" class="text-lg block px-4 py-2 hover:text-indigo-300 hover:bg-indigo-700 rounded-md">Gestión de Pagos</a>
-        </li>
-        
-        <li>
-          <NuxtLink to="https://proyecto-final.duckdns.org/admin/accounts/usuario/148/change/#general-tab" class="text-lg hover:text-indigo-300 transition px-4 py-2 rounded-md hover:bg-indigo-700">Configuración</NuxtLink>
-        </li>
-      </ul>
-    </aside>
+  <div class="flex flex-col min-h-screen">
+    <!-- Botón menú hamburguesa para móviles -->
+    <button
+      class="lg:hidden p-4 bg-indigo-600 text-white flex items-center justify-between"
+      @click="menuAbierto = !menuAbierto"
+    >
+      <span class="font-semibold">Menú Administrador</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+        viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
 
-    <!-- Contenido Principal dinámico -->
-    <main class="content flex-1 p-6 bg-gray-100">
-      <component :is="componenteActual" />
-    </main>
+    <div class="flex flex-col lg:flex-row flex-1">
+      <!-- Menú Lateral -->
+      <aside
+        :class="['bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg p-4 lg:p-6 w-full lg:w-64 transition-all duration-300', menuAbierto ? 'block' : 'hidden', 'lg:block']"
+      >
+        <h2 class="text-xl lg:text-2xl font-semibold mb-6 lg:mb-8 text-center lg:text-left">Panel de Administrador</h2>
+        <ul class="space-y-4">
+          <li>
+            <button
+              @click="seleccionarVista('solicitudes'); menuAbierto = false"
+              :class="['w-full text-left text-base lg:text-lg px-4 py-2 rounded-md transition', vistaSeleccionada === 'solicitudes' ? 'bg-indigo-700 text-indigo-200' : 'hover:bg-indigo-700 hover:text-indigo-300']"
+            >
+              Solicitudes de Gestor
+            </button>
+          </li>
+          <li>
+            <a href="https://proyecto-final.duckdns.org/admin/accounts/usuario/" class="block text-base lg:text-lg px-4 py-2 hover:text-indigo-300 hover:bg-indigo-700 rounded-md">
+              Gestión de Usuarios
+            </a>
+          </li>
+          <li>
+            <button
+              @click="seleccionarVista('estadisticas'); menuAbierto = false"
+              :class="['w-full text-left text-base lg:text-lg px-4 py-2 rounded-md transition', vistaSeleccionada === 'estadisticas' ? 'bg-indigo-700 text-indigo-200' : 'hover:bg-indigo-700 hover:text-indigo-300']"
+            >
+              Estadísticas
+            </button>
+          </li>
+          <li>
+            <a href="https://proyecto-final.duckdns.org/admin/products/producto/" class="block text-base lg:text-lg px-4 py-2 hover:text-indigo-300 hover:bg-indigo-700 rounded-md">
+              Gestión de Productos
+            </a>
+          </li>
+          <li>
+            <a href="https://proyecto-final.duckdns.org/admin/orders/pedido/" class="block text-base lg:text-lg px-4 py-2 hover:text-indigo-300 hover:bg-indigo-700 rounded-md">
+              Gestión de Pedidos
+            </a>
+          </li>
+          <li>
+            <a href="https://proyecto-final.duckdns.org/admin/products/categoria/" class="block text-base lg:text-lg px-4 py-2 hover:text-indigo-300 hover:bg-indigo-700 rounded-md">
+              Gestión de Categorías
+            </a>
+          </li>
+          <li>
+            <a href="https://proyecto-final.duckdns.org/admin/orders/pago/" class="block text-base lg:text-lg px-4 py-2 hover:text-indigo-300 hover:bg-indigo-700 rounded-md">
+              Gestión de Pagos
+            </a>
+          </li>
+          <li>
+            <NuxtLink to="https://proyecto-final.duckdns.org/admin/accounts/usuario/148/change/#general-tab" class="block text-base lg:text-lg hover:text-indigo-300 transition px-4 py-2 rounded-md hover:bg-indigo-700">
+              Configuración
+            </NuxtLink>
+          </li>
+        </ul>
+      </aside>
+
+      <!-- Contenido Principal dinámico -->
+      <main class="flex-1 p-4 lg:p-6 bg-gray-100 overflow-auto">
+        <div class="max-w-7xl mx-auto w-full">
+          <component :is="componenteActual" />
+        </div>
+      </main>
+    </div>
   </div>
 
   <Footer />
@@ -63,33 +93,14 @@ import SolicitudGestorAdmin from '@/components/admin/SolicitudGestorAdmin.vue'
 import EstadisticasProductos from '@/components/admin/EstadisticasProductos.vue'
 
 const vistaSeleccionada = ref('solicitudes')
+const menuAbierto = ref(false)
 
 const seleccionarVista = (vista) => {
   vistaSeleccionada.value = vista
 }
-
 const componenteActual = computed(() => {
   return vistaSeleccionada.value === 'solicitudes'
     ? SolicitudGestorAdmin
     : EstadisticasProductos
 })
 </script>
-
-<style scoped>
-.sidebar {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-}
-.content {
-  margin-left: 16rem;
-}
-button {
-  padding: 10px 18px;
-  font-size: 16px;
-}
-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-</style>
