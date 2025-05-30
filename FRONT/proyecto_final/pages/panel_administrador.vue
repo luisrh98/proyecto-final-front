@@ -21,7 +21,7 @@
       <aside
         :class="['bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg p-4 lg:p-6 w-full lg:w-64 transition-all duration-300', menuAbierto ? 'block' : 'hidden', 'lg:block']"
       >
-        <h2 class="text-xl lg:text-2xl font-semibold mb-6 lg:mb-8 text-center lg:text-left">Panel de Administrador</h2>
+        <h2 class="text-xl lg:text-2xl font-semibold mb-6 lg:mb-8 text-center lg:text-left">Administración  tienda</h2>
         <ul class="space-y-4">
           <li>
             <button
@@ -32,17 +32,20 @@
             </button>
           </li>
           <li>
-            <a href="https://proyecto-final.duckdns.org/admin/accounts/usuario/" class="block text-base lg:text-lg px-4 py-2 hover:text-indigo-300 hover:bg-indigo-700 rounded-md">
-              Gestión de Usuarios
-            </a>
-          </li>
-          <li>
             <button
               @click="seleccionarVista('estadisticas'); menuAbierto = false"
               :class="['w-full text-left text-base lg:text-lg px-4 py-2 rounded-md transition', vistaSeleccionada === 'estadisticas' ? 'bg-indigo-700 text-indigo-200' : 'hover:bg-indigo-700 hover:text-indigo-300']"
             >
               Estadísticas
             </button>
+          </li>
+        </ul>
+        <ul>
+          <h2 class="text-xl lg:text-2xl font-semibold mb-6 lg:mb-8 text-center lg:text-left">Panel de Administrador</h2>
+          <li>
+            <a href="https://proyecto-final.duckdns.org/admin/accounts/usuario/" class="block text-base lg:text-lg px-4 py-2 hover:text-indigo-300 hover:bg-indigo-700 rounded-md">
+              Gestión de Usuarios
+            </a>
           </li>
           <li>
             <a href="https://proyecto-final.duckdns.org/admin/products/producto/" class="block text-base lg:text-lg px-4 py-2 hover:text-indigo-300 hover:bg-indigo-700 rounded-md">

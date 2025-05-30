@@ -174,7 +174,7 @@
           </div>
           <form @submit.prevent="saveDireccion" v-if="usuario" class="space-y-6">
             <div class="form-group">
-              <label for="calle" class="block text-lg font-medium text-gray-700">Calle</label>
+              <label for="calle" class="block text-lg font-medium text-gray-700">Calle, Nº, Bloque...</label>
               <input
                 id="calle"
                 v-model="usuario.direccion.calle"
@@ -604,6 +604,7 @@ async function saveProfile() {
       headers: { Authorization: `Bearer ${token}` }
     })
     successMessage.value = 'Información personal actualizada con éxito'
+    scrollToTop();
     setTimeout(() => {
       successMessage.value = ''
     }, 5000)
@@ -617,18 +618,32 @@ async function saveProfile() {
 
 // Guardar dirección
 async function saveDireccion() {
-  loadingStates.direccion = true
   clearSectionErrors('direccion')
   clearMessages()
+
+  // Validación manual de campos requeridos
+  const { calle, ciudad, codigo_postal, pais } = usuario.value.direccion
+
+  if (!calle || !ciudad || !codigo_postal || !pais) {
+    generalError.value = 'Por favor, completa todos los campos de dirección antes de guardar.'
+    scrollToTop();
+    return
+  }
+
+  loadingStates.direccion = true
+
   try {
     const token = authStore.authToken
     if (!token) throw new Error('No hay token disponible')
+    
     await $axios.put('/accounts/me/', {
       direccion: usuario.value.direccion
     }, {
       headers: { Authorization: `Bearer ${token}` }
     })
+
     successMessage.value = 'Dirección actualizada con éxito'
+    scrollToTop();
     setTimeout(() => {
       successMessage.value = ''
     }, 5000)
@@ -640,6 +655,7 @@ async function saveDireccion() {
   }
 }
 
+
 // Confirmar eliminación de dirección
 async function confirmDeleteAddress() {
   loadingStates.direccion = true
@@ -647,16 +663,14 @@ async function confirmDeleteAddress() {
   try {
     const token = authStore.authToken
     if (!token) throw new Error('No hay token disponible')
+
+    // Enviar el campo como null en lugar de un objeto vacío
     await $axios.put('/accounts/me/', {
-      direccion: {
-        calle: '',
-        ciudad: '',
-        codigo_postal: '',
-        pais: ''
-      }
+      direccion: null
     }, {
       headers: { Authorization: `Bearer ${token}` }
     })
+
     usuario.value.direccion = {
       calle: '',
       ciudad: '',
@@ -665,6 +679,7 @@ async function confirmDeleteAddress() {
     }
     showDeleteModal.value = false
     successMessage.value = 'Dirección eliminada con éxito'
+    scrollToTop();
     setTimeout(() => {
       successMessage.value = ''
     }, 5000)
@@ -694,6 +709,7 @@ async function enviarSolicitudGestor() {
     )
     usuario.value.solicitud_gestor = true
     successMessage.value = 'Solicitud enviada con éxito'
+    scrollToTop();
     datosGestor.value = {
       nombre_tienda: '',
       identificacion_fiscal: '',
@@ -748,4 +764,12 @@ onMounted(() => {
     fetchUsuario()
   }
 })
+
+function scrollToTop() {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  })
+}
+
 </script>

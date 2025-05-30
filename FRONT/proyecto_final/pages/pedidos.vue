@@ -21,7 +21,7 @@
           </div>
 
           <p class="mb-2"><strong>Estado:</strong> {{ pedido.estado }}</p>
-          <p class="mb-4"><strong>Total:</strong> €{{ pedido.total }}</p>
+          <p class="mb-4"><strong>Total:</strong> {{ pedido.total }} €</p>
 
           <div class="mb-4">
             <h3 class="font-medium text-gray-700 mb-1">Dirección de Envío</h3>
@@ -38,7 +38,7 @@
             <h3 class="font-medium text-gray-700 mb-2">Productos</h3>
             <ul class="space-y-1 text-sm text-gray-700 list-disc pl-5">
               <li v-for="item in pedido.items" :key="item.id">
-                {{ item.cantidad }} x {{ item.producto }} - €{{ item.precio_unitario }}
+                {{ item.cantidad }} x {{ item.producto }} - {{ item.precio_unitario }} €
               </li>
             </ul>
           </div>

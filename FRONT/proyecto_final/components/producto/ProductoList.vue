@@ -22,7 +22,7 @@
             <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ producto.titulo }}</h3>
             <p class="text-gray-600 text-sm flex-grow">{{ producto.descripcion }}</p>
             <div class="text-sm text-gray-700 mt-4 space-y-1">
-              <p><strong>Precio:</strong> ${{ producto.precio }}</p>
+              <p><strong>Precio:</strong> {{ producto.precio }} €</p>
               <p><strong>Categoría:</strong> {{ producto.categoria }}</p>
             </div>
             <div class="mt-6 flex gap-2">

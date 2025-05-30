@@ -32,7 +32,7 @@
 
           <div class="product-info text-center">
             <h3 class="text-xl font-medium text-indigo-600 mb-2">{{ producto.titulo }}</h3>
-            <p class="text-lg text-gray-700">Precio: ${{ producto.precio }}</p>
+            <p class="text-lg text-gray-700">Precio: {{ producto.precio }}  €</p>
             <p class="text-sm text-gray-500">Categoría: {{ producto.categoria }}</p>
           </div>
         </div>
@@ -130,7 +130,7 @@
           class="pedido-card bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
         >
           <h3 class="text-xl font-medium text-indigo-600">Pedido #{{ pedido.id }}</h3>
-          <p class="text-lg text-gray-700">Total: ${{ pedido.total }}</p>
+          <p class="text-lg text-gray-700">Total: {{ pedido.total }} €</p>
           <p class="text-sm text-gray-500">Dirección: {{ pedido.calle }}, {{ pedido.ciudad }}</p>
           <button
             class="w-full py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-300"

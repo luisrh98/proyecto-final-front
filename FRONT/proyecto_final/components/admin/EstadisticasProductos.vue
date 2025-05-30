@@ -10,11 +10,11 @@
       </div>
       <div class="flex justify-between text-lg">
         <span class="font-medium text-gray-800">Ingresos Totales:</span>
-        <span>${{ estadisticas.ingresos_totales.toFixed(2) }}</span>
+        <span>{{ estadisticas.ingresos_totales.toFixed(2) }} €</span>
       </div>
       <div class="flex justify-between text-lg">
         <span class="font-medium text-gray-800">Promedio por Pedido:</span>
-        <span>${{ estadisticas.promedio_pedido.toFixed(2) }}</span>
+        <span>{{ estadisticas.promedio_pedido.toFixed(2) }} €</span>
       </div>
       <div class="flex justify-between text-lg">
         <span class="font-medium text-gray-800">Productos Vendidos:</span>
