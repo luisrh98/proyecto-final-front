@@ -138,4 +138,12 @@ const handleSubmit = async () => {
     loading.value = false;
   }
 };
+
+onMounted(() => {
+  const route = useRoute();
+  if (route.query.activated === 'true') {
+    showNotification('Cuenta activada. Ya puedes iniciar sesión.', 'success');
+  }
+});
+
 </script>

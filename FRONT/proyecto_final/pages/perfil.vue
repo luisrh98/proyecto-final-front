@@ -363,6 +363,49 @@
                 {{ errors.gestor.identificacion_fiscal }}
               </p>
             </div>
+
+            <div class="form-group">
+          <label for="direccion_tienda" class="block text-lg font-medium text-gray-700">Dirección de la Tienda</label>
+          <input
+            id="direccion_tienda"
+            v-model="datosGestor.direccion_tienda"
+            type="text"
+            required
+            minlength="5"
+            maxlength="255"
+            :disabled="loadingStates.gestor"
+            :class="[
+              'w-full p-3 border rounded-lg transition-colors',
+              errors.gestor.direccion_tienda ? 'border-red-300 bg-red-50' : 'border-gray-300'
+            ]"
+          />
+          <p v-if="errors.gestor.direccion_tienda" class="text-red-500 text-sm mt-1 flex items-center gap-1">
+            <i class="fas fa-exclamation-circle text-xs"></i>
+            {{ errors.gestor.direccion_tienda }}
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label for="telefono_tienda" class="block text-lg font-medium text-gray-700">Teléfono de Contacto</label>
+          <input
+            id="telefono_tienda"
+            v-model="datosGestor.telefono_tienda"
+            type="tel"
+            required
+            pattern="\d{9,15}"
+            title="Introduce un número de teléfono válido (entre 9 y 15 dígitos)"
+            :disabled="loadingStates.gestor"
+            :class="[
+              'w-full p-3 border rounded-lg transition-colors',
+              errors.gestor.telefono_tienda ? 'border-red-300 bg-red-50' : 'border-gray-300'
+            ]"
+          />
+          <p v-if="errors.gestor.telefono_tienda" class="text-red-500 text-sm mt-1 flex items-center gap-1">
+            <i class="fas fa-exclamation-circle text-xs"></i>
+            {{ errors.gestor.telefono_tienda }}
+          </p>
+        </div>
+
             <div class="text-center pt-4">
               <button
                 type="submit"
@@ -472,7 +515,9 @@ const errors = reactive({
   },
   gestor: {
     nombre_tienda: '',
-    identificacion_fiscal: ''
+    identificacion_fiscal: '',
+    direccion_tienda: '',
+    telefono_tienda: '',
   }
 })
 
@@ -704,6 +749,8 @@ async function enviarSolicitudGestor() {
       {
         nombre_tienda: datosGestor.value.nombre_tienda,
         identificacion_fiscal: datosGestor.value.identificacion_fiscal,
+        direccion: datosGestor.value.direccion_tienda,
+        telefono: datosGestor.value.telefono_tienda
       },
       { headers: { Authorization: `Bearer ${token}` } }
     )
@@ -748,7 +795,9 @@ watch([
 
 watch([
   () => datosGestor.value.nombre_tienda,
-  () => datosGestor.value.identificacion_fiscal
+  () => datosGestor.value.identificacion_fiscal,
+  () => datosGestor.value.direccion_tienda,
+  () => datosGestor.value.telefono_tienda
 ], () => {
   clearSectionErrors('gestor')
   if (generalError.value) generalError.value = ''

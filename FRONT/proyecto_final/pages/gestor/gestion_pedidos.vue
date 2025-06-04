@@ -23,11 +23,17 @@
             class="absolute inset-0 bg-black bg-opacity-25 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md"
           >
             <button
-              @click="onEditar(producto)"
-              class="px-4 py-2 bg-white text-indigo-700 font-semibold rounded-lg hover:bg-indigo-100 transition"
-            >
-              Editar
-            </button>
+  @click="onEditar(producto)"
+  class="px-4 py-2 bg-white text-indigo-700 font-semibold rounded-lg hover:bg-indigo-100 transition"
+>
+  Editar
+</button>
+<button
+  @click="confirmarEliminacion(producto)"
+  class="ml-2 px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition"
+>
+  Eliminar
+</button>
           </div>
 
           <div class="product-info text-center">
@@ -68,16 +74,17 @@
         </div>
 
         <div>
-          <label for="precio" class="block text-lg font-medium text-gray-700">Precio:</label>
-          <input
-            type="number"
-            id="precio"
-            v-model="nuevoProducto.precio"
-            step="0.01"
-            required
-            class="w-full p-3 border border-gray-300 rounded-lg"
-          />
-        </div>
+  <label for="precio" class="block text-lg font-medium text-gray-700">Precio:</label>
+  <input
+    type="number"
+    id="precio"
+    v-model="nuevoProducto.precio"
+    step="0.01"
+    required
+    class="w-full p-3 border border-gray-300 rounded-lg"
+  />
+  <p v-if="erroresFormulario.precio" class="text-red-500 text-sm mt-1">{{ erroresFormulario.precio }}</p>
+</div>
 
         <div>
           <label for="categoria" class="block text-lg font-medium text-gray-700">Categoría:</label>
@@ -93,15 +100,15 @@
         </div>
 
         <div>
-          <label class="block text-lg font-medium text-gray-700">Imagen:</label>
-          <!-- Preview de imagen existente al editar -->
-          <img v-if="estaEditando && nuevoProducto.imagenPreview" :src="nuevoProducto.imagenPreview" alt="Preview Imagen" class="w-32 h-32 object-cover rounded-md mb-4" />
-          <input
-            type="file"
-            @change="handleImageUpload"
-            class="w-full p-3 border border-gray-300 rounded-lg"
-          />
-        </div>
+  <label class="block text-lg font-medium text-gray-700">Imagen:</label>
+  <img v-if="estaEditando && nuevoProducto.imagenPreview" :src="nuevoProducto.imagenPreview" alt="Preview Imagen" class="w-32 h-32 object-cover rounded-md mb-4" />
+  <input
+    type="file"
+    @change="handleImageUpload"
+    class="w-full p-3 border border-gray-300 rounded-lg"
+  />
+  <p v-if="erroresFormulario.imagen" class="text-red-500 text-sm mt-1">{{ erroresFormulario.imagen }}</p>
+</div>
 
         <button
           type="submit"
@@ -158,6 +165,14 @@ const router = useRouter();
 const { $axios } = useNuxtApp();
 
 // Estados
+const erroresFormulario = ref({
+  titulo: '',
+  descripcion: '',
+  precio: '',
+  categoria: '',
+  imagen: ''
+});
+
 const misProductos = ref([]);
 const enviosPendientes = ref([]);
 const categorias = ref([]);
@@ -214,18 +229,43 @@ const handleImageUpload = e => {
 };
 
 const crearProducto = async () => {
+  erroresFormulario.value = {
+    titulo: '',
+    descripcion: '',
+    precio: '',
+    categoria: '',
+    imagen: ''
+  };
+
   if (!nuevoProducto.value.titulo || !nuevoProducto.value.descripcion || !nuevoProducto.value.precio || !nuevoProducto.value.categoria || !nuevoProducto.value.imagen) {
-    return alert('Completa todos los campos.');
+    alert('Completa todos los campos.');
+    return;
   }
+
   const fd = new FormData();
-  Object.entries(nuevoProducto.value).forEach(([k,v])=>{
-    if(k==='imagen'&&!v) return;
-    fd.append(k,v);
+  Object.entries(nuevoProducto.value).forEach(([k, v]) => {
+    if (k === 'imagen' && !v) return;
+    fd.append(k, v);
   });
+
   try {
-    await $axios.post('/products/productos/', fd, { headers:{ 'Content-Type':'multipart/form-data' }});
-    await fetchMisProductos(); resetForm(); alert('Producto creado.');
-  } catch(e){ console.error(e); alert('Error creando producto.'); }
+    await $axios.post('/products/productos/', fd, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    await fetchMisProductos();
+    resetForm();
+    alert('Producto creado.');
+  } catch (e) {
+    if (e.response && e.response.data) {
+      const errores = e.response.data;
+      for (const campo in errores) {
+        erroresFormulario.value[campo] = Array.isArray(errores[campo]) ? errores[campo].join(', ') : errores[campo];
+      }
+    } else {
+      console.error(e);
+      alert('Error creando producto.');
+    }
+  }
 };
 
 const onEditar = producto => {
@@ -249,10 +289,34 @@ const guardarCambios = async () => {
   try {
     await $axios.patch(`/products/productos/${productoSeleccionado.value}/`, fd, { headers:{ 'Content-Type':'multipart/form-data' }});
     await fetchMisProductos(); resetForm(); alert('Producto actualizado.');
-  } catch(e){ console.error(e); alert('Error guardando cambios.'); }
+  } catch(e){ 
+    console.error(e);
+    if (e.response && e.response.status === 400) {
+      errores.value = e.response.data;
+    } else {
+      alert('Error creando producto.');
+    }
+   }
 };
 
 const cancelarEdicion = () => resetForm();
+
+const confirmarEliminacion = (producto) => {
+  if (confirm(`¿Estás seguro de que quieres eliminar el producto "${producto.titulo}"? Esta acción no se puede deshacer.`)) {
+    eliminarProducto(producto.id);
+  }
+};
+
+const eliminarProducto = async (id) => {
+  try {
+    await $axios.delete(`/products/productos/${id}/`);
+    await fetchMisProductos();
+    alert('Producto eliminado correctamente.');
+  } catch (error) {
+    console.error(error);
+    alert('Hubo un error al intentar eliminar el producto.');
+  }
+};
 
 const marcarComoEnviado = async id => {
   try { await $axios.patch(`/orders/pedidos/${id}/`, { estado:'enviado' }); await fetchEnviosPendientes(); alert('Envío enviado.'); }
