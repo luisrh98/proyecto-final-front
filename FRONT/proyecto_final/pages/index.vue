@@ -90,7 +90,7 @@ const filtroNombre = ref('');
 const ordenPrecio = ref('');
 
 // Fijamos el tamaño de página (coincide con PAGE_SIZE en settings.py)
-const PAGE_SIZE = 9;
+const PAGE_SIZE = 6;
 
 // Construye y realiza la llamada al backend
 const fetchProductos = async () => {

@@ -128,27 +128,31 @@
     </section>
 
     <!-- Sección 3: Envíos Pendientes -->
-    <section class="envios-pendientes bg-white p-6 rounded-lg shadow-md mt-12">
-      <h2 class="text-2xl font-semibold text-indigo-700 mb-6">Envíos Pendientes</h2>
-      <div v-if="enviosPendientes.length > 0" class="pedidos-list space-y-6">
-        <div
-          v-for="pedido in enviosPendientes"
-          :key="pedido.id"
-          class="pedido-card bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
-        >
-          <h3 class="text-xl font-medium text-indigo-600">Pedido #{{ pedido.id }}</h3>
-          <p class="text-lg text-gray-700">Total: {{ pedido.total }} €</p>
-          <p class="text-sm text-gray-500">Dirección: {{ pedido.calle }}, {{ pedido.ciudad }}</p>
-          <button
-            class="w-full py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-300"
-            @click="marcarComoEnviado(pedido.id)"
-          >
-            Marcar como Enviado
-          </button>
-        </div>
-      </div>
-      <p v-else class="text-center text-gray-500">No hay envíos pendientes.</p>
-    </section>
+<section class="envios-pendientes bg-white p-6 rounded-lg shadow-md mt-12">
+  <h2 class="text-2xl font-semibold text-indigo-700 mb-6">Envíos Pendientes</h2>
+  <div v-if="enviosPendientes.length > 0" class="pedidos-list space-y-6">
+    <div
+      v-for="item in enviosPendientes"
+      :key="item.id + '-' + item.producto_titulo"
+      class="pedido-card bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+    >
+      <h3 class="text-xl font-medium text-indigo-600 mb-2">Pedido #{{ item.pedido_id }}</h3>
+      <p class="text-lg text-gray-700 mb-1">Producto: {{ item.producto_titulo }}</p>
+      <p class="text-gray-700 mb-1">Cantidad: {{ item.cantidad }}</p>
+      <p class="text-gray-700 mb-1">Precio Unitario: {{ item.precio_unitario }} €</p>
+      <p class="text-sm text-gray-500 mb-1">
+        Dirección: {{ item.pedido_calle }}, {{ item.pedido_ciudad }}, {{ item.pedido_codigo_postal }}, {{ item.pedido_pais }}
+      </p>
+      <button
+        class="w-full py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-300"
+        @click="marcarComoEnviado(item.pedido_id)"
+      >
+        Marcar como Enviado
+      </button>
+    </div>
+  </div>
+  <p v-else class="text-center text-gray-500">No hay envíos pendientes.</p>
+</section>
   </div>
   <Footer />
 </template>
