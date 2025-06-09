@@ -20,6 +20,10 @@
         <span class="font-medium text-gray-800">Productos Vendidos:</span>
         <span>{{ estadisticas.productos_vendidos }}</span>
       </div>
+      <div class="flex justify-between text-lg">
+        <span class="font-medium text-gray-800">Recaudación del 5%:</span>
+        <span>{{ estadisticas.beneficios_totales }}</span>
+      </div>
     </div>
 
     <!-- Mostrar cargando -->

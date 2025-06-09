@@ -38,7 +38,7 @@
             <h3 class="font-medium text-gray-700 mb-2">Productos</h3>
             <ul class="space-y-1 text-sm text-gray-700 list-disc pl-5">
               <li v-for="item in pedido.items" :key="item.id">
-                {{ item.cantidad }} x {{ item.producto }} - {{ item.precio_unitario }} €
+                {{ item.cantidad }} x {{ item.producto_titulo }} - {{ item.precio_unitario }} €
               </li>
             </ul>
           </div>
